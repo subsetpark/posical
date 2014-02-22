@@ -97,9 +97,19 @@ class PositivistDate(object):
 		return downcast > othercast
 	
 	def __lt__(self, other_date):
-			downcast = (self.to_gregorian())
-			othercast = (other_date.to_gregorian())
-			return downcast < othercast	
+		downcast = (self.to_gregorian())
+		othercast = (other_date.to_gregorian())
+		return downcast < othercast	
+	
+	def __ge__(self, other_date):
+		downcast = (self.to_gregorian())
+		othercast = (other_date.to_gregorian())
+		return downcast >= othercast
+		
+	def __le__(self, other_date):
+		downcast = (self.to_gregorian())
+		othercast = (other_date.to_gregorian())
+		return downcast <= othercast
 	
 if __name__ == "__main__":	
 	import doctest
