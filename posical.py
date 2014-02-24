@@ -60,6 +60,8 @@ class PositivistDate(object):
 			self.day_name = SAINTS[self.day_of_year - 1]
 		self.weekday = self.day % 7 or 7
 		self.weekday_name = DAYS[self.weekday - 1]
+
+		self.downcast = self.to_gregorian
 		
 	def to_gregorian(self):
 		# get ordinal value of the year, then add the 
@@ -78,35 +80,28 @@ class PositivistDate(object):
 		return 'positivist date(%d, %d, %d)' % (self.year, self.month, self.day)
 	
 	def __add__(self, timedelta):
-		downcast = self.to_gregorian()
-		return PositivistDate(downcast + timedelta)
+		return PositivistDate(self.downcast + timedelta)
 		
 	def __sub__(self, timedelta):
-		downcast = self.to_gregorian()
-		return PositivistDate(downcast - timedelta)
+		return PositivistDate(self.downcast - timedelta)
 	
 	def __eq__(self, other_date):
-		downcast = (self.to_gregorian())
 		othercast = (other_date.to_gregorian())
-		return downcast == othercast
+		return self.downcast == othercast
 	
 	def __gt__(self, other_date):
-		downcast = (self.to_gregorian())
 		othercast = (other_date.to_gregorian())
-		return downcast > othercast
+		return self.downcast > othercast
 	
 	def __lt__(self, other_date):
-		downcast = (self.to_gregorian())
 		othercast = (other_date.to_gregorian())
 		return downcast < othercast	
 	
 	def __ge__(self, other_date):
-		downcast = (self.to_gregorian())
 		othercast = (other_date.to_gregorian())
 		return downcast >= othercast
 		
 	def __le__(self, other_date):
-		downcast = (self.to_gregorian())
 		othercast = (other_date.to_gregorian())
 		return downcast <= othercast
 	
