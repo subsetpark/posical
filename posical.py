@@ -13,9 +13,9 @@ class PositivistDate(object):
 	"""
 	Representation of a positivist date.
 	
-	>>> PositivistDate()
+	>>> PositivistDate(2014, 2, 22)
 	positivist date(226, 2, 25)
-	>>> PositivistDate(date.today())
+	>>> PositivistDate(date(2014, 2, 22))
 	positivist date(226, 2, 25)
 	>>> print PositivistDate(2001, 1, 1)
 	Monday, Moses 1, 213: Prometheus
@@ -27,10 +27,9 @@ class PositivistDate(object):
 	Thursday, Aristotle 4, 212: Anaxagoras
 	>>> print PositivistDate(2000, 12, 31)
 	Festival of Holy Women, 212
-	>>> print PositivistDate().to_gregorian()
+	>>> print PositivistDate(2014, 2, 22).to_gregorian()
 	2014-02-22
 	"""
-	
 	
 	def __init__(self, *args):
 		# If no arg, make one from today. Else try int, int, int.
