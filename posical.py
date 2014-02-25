@@ -5,10 +5,21 @@ from datetime import date
 from calendar import isleap
 
 def design_calendar():
-	m_i_year = int(raw_input("How many months? "))
+	"""
+	Reference math from Calca:
+	days = 365
+	d_i_week = 7
+	w_i_month = 4
+	m_i_year = round(365 / (d_i_week * w_i_month)) => 13
+
+	ic_days = days - (d_i_week * w_i_month * m_i_year) => 1
+	"""
+
 	d_i_week = int(raw_input("How many days in a week? "))
+	w_i_month = int(raw_input("How many weeks in a month? "))
+	m_i_year = 365 / (d_i_week * w_i_month)
 	year_1 = int(raw_input("When is year 1? "))
-	return AlternateCal(m_i_year, d_i_week, year_1)
+	return AlternateCal(m_i_year, w_i_month, d_i_week, year_1)
 
 class AlternateCal(object):
 	"""
@@ -34,14 +45,16 @@ class AlternateCal(object):
 	>>> cal2 = New_cal()
 	>>> cal.date(2014, 2, 22)
 	positivist date(226, 2, 25)
+	>>> print cal
+	The Positivist calendar, consisting of 7-day weeks, 28-week months, and 13-month years, with 1 intercalary day(s).
 	"""
 	
-	def __init__(calendar, m_i_year=28, d_i_week=7, year_1=1788):
+	def __init__(calendar, m_i_year=28, w_i_month=4, d_i_week=7, year_1=1788):
 
-		calendar.name = 'positivist'
-		calendar.days_in_a_month = m_i_year
+		calendar.name = 'Positivist'
+		calendar.days_in_a_month = d_i_week * w_i_month
 		calendar.days_in_a_week = d_i_week
-		calendar.months_num = 365 / calendar.days_in_a_month
+		calendar.months_in_a_year = 365 / calendar.days_in_a_month
 		calendar.intercalary_days = 365 % calendar.days_in_a_month
 		calendar.year_offset = year_1
 
@@ -52,8 +65,6 @@ class AlternateCal(object):
 
 		class AlternateDate(object):
 			def __init__(self, gregorian):
-				# If no arg, make one from today. Else try int, int, int.
-				# Else try date().
 				self.year = gregorian.year - calendar.year_offset
 				self.is_leap = False
 				if isleap(gregorian.year):
@@ -79,14 +90,14 @@ class AlternateCal(object):
 				return date.fromordinal(date(year, 1, 1).toordinal() + self.day_of_year - 1)
 			
 			def __str__(self):
-				if self.month is calendar.months_num + 1:
+				if self.month is calendar.months_in_a_year + 1:
 					return "%s, %d" % (self.day_name, self.year)
 				else:
 					return "%s, %s %d, %d: %s" % (self.weekday_name, self.month_name, 
 												   self.day, self.year, self.day_name)
 				
 			def __repr__(self):
-				return '%s date(%d, %d, %d)' % (calendar.name, self.year, self.month, self.day)
+				return '%s date(%d, %d, %d)' % (calendar.name.lower(), self.year, self.month, self.day)
 			
 			def __add__(self, timedelta):
 				return self.date_class(self.downcast + timedelta)
@@ -128,6 +139,9 @@ class AlternateCal(object):
 					return self.date_class(args[0])
 				except Exception:
 					raise
+
+	def __str__(self):
+		return "The %s calendar, consisting of %d-day weeks, %d-week months, and %d-month years, with %d intercalary day(s)." % (self.name, self.days_in_a_week, self.days_in_a_month / self.days_in_a_week, self.months_in_a_year, self.intercalary_days)
 
 if __name__ == "__main__":	
 	import doctest
