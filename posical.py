@@ -140,6 +140,16 @@ class AlternateCal(object):
 				except Exception:
 					raise
 
+	def print_cal(self):
+		print (self.days_in_a_week * '+------------')
+		print (self.days_in_a_week * '|            ')+'|'
+		print (self.days_in_a_week * '|            ')+'|'
+		print (self.days_in_a_week * '|            ')+'|'
+		print (self.days_in_a_week * '|            ')+'|'
+		print (self.days_in_a_week * '|            ')+'|'
+		print (self.days_in_a_week * '|            ')+'|'
+		print (self.days_in_a_week * '+------------')
+
 	def __str__(self):
 		return "The %s calendar, consisting of %d-day weeks, %d-week months, and %d-month years, with %d intercalary day(s)." % (self.name, self.days_in_a_week, self.days_in_a_month / self.days_in_a_week, self.months_in_a_year, self.intercalary_days)
 
