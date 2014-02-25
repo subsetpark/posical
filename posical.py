@@ -4,7 +4,11 @@
 from datetime import date
 from calendar import isleap
 
-
+def design_calendar():
+	m_i_year = int(raw_input("How many months? "))
+	d_i_week = int(raw_input("How many days in a week? "))
+	year_1 = int(raw_input("When is year 1? "))
+	return AlternateCal(m_i_year, d_i_week, year_1)
 
 class AlternateCal(object):
 	"""
@@ -32,14 +36,14 @@ class AlternateCal(object):
 	positivist date(226, 2, 25)
 	"""
 	
-	def __init__(calendar):
+	def __init__(calendar, m_i_year=28, d_i_week=7, year_1=1788):
 
 		calendar.name = 'positivist'
-		calendar.days_in_a_month = 28 # Positivist Default
-		calendar.days_in_a_week = 7  # Positivist Default
+		calendar.days_in_a_month = m_i_year
+		calendar.days_in_a_week = d_i_week
 		calendar.months_num = 365 / calendar.days_in_a_month
 		calendar.intercalary_days = 365 % calendar.days_in_a_month
-		calendar.year_offset = 1788 # Positivist Default
+		calendar.year_offset = year_1
 
 		calendar.MONTHS = ('Moses', 'Homer', 'Aristotle', 'Archimedes', 'Caesar', 'Saint Paul', 'Charlemagne', 'Dante', 'Gutenberg', 'Shakespeare', 'Descartes', 'Frederick', 'Bichat', 'Complementary')
 		calendar.DAYS = ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
