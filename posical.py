@@ -30,32 +30,32 @@ class AlternateCal(object):
 	"""
 	>>> cal = AlternateCal()
 	>>> bad_cal = AlternateCal(w_i_month=3, d_i_week=8, year_1=1788)
-	>>> cal.date(2014, 2, 22)
+	>>> cal.from_date(2014, 2, 22)
 	positivist date(226, 2, 25)
-	>>> cal.date(datetime.date(2014, 2, 22))
+	>>> cal.from_date(datetime.date(2014, 2, 22))
 	positivist date(226, 2, 25)
-	>>> print(cal.date(2001, 1, 1))
+	>>> print(cal.from_date(2001, 1, 1))
 	Monday, Moses 1, 213: Prometheus
-	>>> print(cal.date(2001, 5, 10))
+	>>> print(cal.from_date(2001, 5, 10))
 	Thursday, Caesar 18, 213: Hannibal
-	>>> print(cal.date(2001, 12, 31))
+	>>> print(cal.from_date(2001, 12, 31))
 	Festival of All the Dead, 213
-	>>> print(cal.date(2000, 2, 29))
+	>>> print(cal.from_date(2000, 2, 29))
 	Thursday, Aristotle 4, 212: Anaxagoras
-	>>> print(cal.date(2000, 12, 31))
+	>>> print(cal.from_date(2000, 12, 31))
 	Festival of Holy Women, 212
-	>>> print(cal.date(2014, 2, 22).to_gregorian())
+	>>> print(cal.from_date(2014, 2, 22).to_gregorian())
 	2014-02-22
 	>>> class New_cal(AlternateCal):
 	...  days_in_a_month = 26
 	>>> cal2 = New_cal()
-	>>> cal.date(2014, 2, 22)
+	>>> cal.from_date(2014, 2, 22)
 	positivist date(226, 2, 25)
 	>>> print(cal)
 	The Positivist calendar, consisting of 7-day weeks, 4-week months, and 13-month years, with 1 intercalary day(s).
 	>>> print(bad_cal)
 	The Crepuscular calendar, consisting of 8-day weeks, 3-week months, and 15-month years, with 5 intercalary day(s).
-	>>> print(bad_cal.date(2014, 3, 5))
+	>>> print(bad_cal.from_date(2014, 3, 5))
 	8th Day, March 16, 226: Solon
 	"""
 	
@@ -112,10 +112,10 @@ class AlternateCal(object):
 				return '%s date(%d, %d, %d)' % (calendar.name.lower(), self.year, self.month, self.day)
 			
 			def __add__(self, timedelta):
-				return self.calendar.date((self.downcast + timedelta))
+				return self.calendar.from_date((self.downcast + timedelta))
 				
 			def __sub__(self, timedelta):
-				return self.calendar.date((self.downcast - timedelta))
+				return self.calendar.from_date((self.downcast - timedelta))
 
 			def __eq__(self, other_date):
 				othercast = (other_date.to_gregorian())
@@ -139,7 +139,7 @@ class AlternateCal(object):
 
 		calendar.date_class = AlternateDate
 
-	def date(self, *args):
+	def from_date(self, *args):
 		if not args:
 			return self.date_class(datetime.date.today(), self)
 		else:
