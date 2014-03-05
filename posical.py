@@ -1,8 +1,7 @@
 #! usr/bin/env python #
 # -*- coding: utf-8 -*-
 
-import datetime
-from calendar import isleap
+import datetime, calendar
 
 POSIMONTHS = ('Moses', 'Homer', 'Aristotle', 'Archimedes', 'Caesar', 'Saint Paul', 'Charlemagne', 'Dante', 'Gutenberg', 'Shakespeare', 'Descartes', 'Frederick', 'Bichat', 'Complementary')
 REGMONTHS = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'October', 'November', 'December', 'Intercalary')
@@ -22,9 +21,9 @@ def design_calendar():
 	ic_days = days - (d_i_week * w_i_month * m_i_year) => 1
 	"""
 
-	d_i_week = int(raw_input("How many days in a week? ") or 7)
-	w_i_month = int(raw_input("How many weeks in a month? ") or 4)
-	year_1 = int(raw_input("When is year 1? ") or 1788)
+	d_i_week = int(input("How many days in a week? ") or 7)
+	w_i_month = int(input("How many weeks in a month? ") or 4)
+	year_1 = int(input("When is year 1? ") or 1788)
 	return AlternateCal(w_i_month, d_i_week, year_1)
 
 class AlternateCal(object):
@@ -35,45 +34,46 @@ class AlternateCal(object):
 	positivist date(226, 2, 25)
 	>>> cal.date(datetime.date(2014, 2, 22))
 	positivist date(226, 2, 25)
-	>>> print cal.date(2001, 1, 1)
+	>>> print(cal.date(2001, 1, 1))
 	Monday, Moses 1, 213: Prometheus
-	>>> print cal.date(2001, 5, 10)
+	>>> print(cal.date(2001, 5, 10))
 	Thursday, Caesar 18, 213: Hannibal
-	>>> print cal.date(2001, 12, 31)
+	>>> print(cal.date(2001, 12, 31))
 	Festival of All the Dead, 213
-	>>> print cal.date(2000, 2, 29)
+	>>> print(cal.date(2000, 2, 29))
 	Thursday, Aristotle 4, 212: Anaxagoras
-	>>> print cal.date(2000, 12, 31)
+	>>> print(cal.date(2000, 12, 31))
 	Festival of Holy Women, 212
-	>>> print cal.date(2014, 2, 22).to_gregorian()
+	>>> print(cal.date(2014, 2, 22).to_gregorian())
 	2014-02-22
 	>>> class New_cal(AlternateCal):
 	...  days_in_a_month = 26
 	>>> cal2 = New_cal()
 	>>> cal.date(2014, 2, 22)
 	positivist date(226, 2, 25)
-	>>> print cal
+	>>> print(cal)
 	The Positivist calendar, consisting of 7-day weeks, 4-week months, and 13-month years, with 1 intercalary day(s).
-	>>> print bad_cal
-	The Re-Corresponding calendar, consisting of 8-day weeks, 3-week months, and 15-month years, with 5 intercalary day(s).
-	>>> print bad_cal.date(2014, 3, 5)
+	>>> print(bad_cal)
+	The Crepuscular calendar, consisting of 8-day weeks, 3-week months, and 15-month years, with 5 intercalary day(s).
+	>>> print(bad_cal.date(2014, 3, 5))
 	8th Day, March 16, 226: Solon
 	"""
 	
 	def __init__(calendar, w_i_month=4, d_i_week=7, year_1=1788):
 		calendar.days_in_a_month = d_i_week * w_i_month
 		calendar.days_in_a_week = d_i_week
-		calendar.months_in_a_year = 365 / calendar.days_in_a_month
+		calendar.weeks_in_a_month = w_i_month
+		calendar.months_in_a_year = 365 // calendar.days_in_a_month
 		calendar.intercalary_days = 365 % calendar.days_in_a_month
-		name_choices = ('New Adjusted', 'Utilitarian', 'Lycurgian', 'Multi-Manifold', 'Crepuscular', 'Positivist', 'Adamantine', 'Organic Non-Repeating', 'Antediluvian', 'Re-Corresponding', 'Urquhart')
-		calendar.name = name_choices[(calendar.months_in_a_year ** w_i_month / d_i_week + year_1) % 11]
+		name_choices = ('New Adjusted', 'Utilitarian', 'Lycurgian', 'Multi-Manifold', 'Crepuscular', 'Urquhart', 'Adamantine', 'Organic Non-Repeating', 'Antediluvian', 'Re-Corresponding', 'Positivist')
+		calendar.name = name_choices[hash((w_i_month, d_i_week, year_1)) % 11]
 		calendar.year_offset = year_1
 		if calendar.name is 'Positivist':
 			calendar.MONTHS = POSIMONTHS
 		else:
 			calendar.MONTHS = REGMONTHS
 		calendar.DAYS = ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
-		calendar.SAINTS = ('Prometheus', 'Hercules', 'Orpheus', 'Ulysses', 'Lycurgus', 'Romulus', 'NUMA', 'Belus', 'Sesostris', 'Menu', 'Cyrus', 'Zoroaster', 'The Druids', 'BUDDHA', 'Fo-Hi', 'Lao-Tseu', 'Meng-Tseu', 'Theocrats of Tibet', 'Theocrats of Japan', 'Mano-Capac', 'CONFUCIUS', 'Abraham', 'Samuel', 'Solomon', 'Isaiah', 'St. John  the Baptist', 'Haroun-al-Raschid', 'MUHAMMAD', 'Hesiod', 'Tyrt&#230us', 'Anacreon', 'Pindar', 'Sophocles', 'Theocritus', '&#198SCHYLUS', 'Scopas', 'Zeuxis', 'Ictinus', 'Praxiteles', 'Lysippus', 'Apelles', 'PHIDIAS', '&#198sop', 'Plautus', 'Terence', 'Phaedrus', 'Juvenal', 'Lucian', 'ARISTOPHANES', 'Ennius', 'Lucretius', 'Horace', 'Tibullus', 'Ovid', 'Lucan', 'VIRGIL', 'Anaximander', 'Anaximenes', 'Heraclitus', 'Anaxagoras', 'Democritus', 'Herodotus', 'THALES', 'Solon', 'Xenophanes', 'Empodocles', 'Thucydides', 'Archytas', 'Apollonius of Tyana', 'PYTHAGO- RAS', 'Aristippus', 'Antisthenes', 'Zeno', 'Cicero', 'Epictetus', 'Tacitus', 'SOCRATES', 'Xenocrates', 'Philo of Alexandria', 'St. John the Evangelist', 'St. Justin', ' St.Clement of Alexandria', 'Origen', 'PLATO', 'Theophrastus', 'Herophilus', 'Erasistratus', 'Celsus', 'Galen', 'Avicenna', 'HIPPOC- RATES', 'Euclid', 'Arist\u0230us', 'Theodisius of Bithynia', 'Hero', 'Pappus', 'Diophantus', 'APOLLONIUS', 'Eudoxus', 'Pytheas', 'Aristarchus', 'Eratos- thenes', 'Ptolemy', 'Albategnius', 'HIPPARCHUS', 'Varro', 'Columella', 'Vitruvius', 'Strabo', 'Frontinus', 'Plutarch', 'PLINY THE ELDER', 'Miltiades', 'Leonidas', 'Aristides', 'Cimon', 'Xenophon', 'Phocion', 'THEMISTOCLES', 'Pericles', 'Philip', 'Demos- thenes', 'Ptolemy Lagus', 'Philopoemen', 'Polybius', 'ALEXANDER', 'Junius Brutus', 'Camillus', 'Fabricius', 'Hannibal', 'Paulus Aemilius', 'Marius', 'SCIPIO', 'Augustus', 'Vespasian', 'Hadrian', 'Antonius', 'Papinian', 'Alexander Severus', 'TRAJAN', 'St. Luke', 'St. Cyprian', ' St.Athanasius', 'St. Jerome', 'St. Ambrose', 'St. Monica', ' St.AUGUSTINE', 'Constantine', 'Theodosius', 'St. Chrysos- tom', ' St.Genevieve of Paris', 'St. Pulcheria', 'St. Gregory the Great', 'HILDEBRAND', 'St. Benedict', 'St. Boniface', 'St. Isidore of Seville', 'Lanfranc', 'Heloise', "Arch'ts of Middle Ages", ' St.BERNARD', 'St. Francis Xavier', 'St. Charles Borromeo', 'St. Theresa', 'St. Vincent de Paul', 'Bourdaloue', 'William Penn', 'BOSSUET', 'Theodoric the Great', 'Pelayo', 'Otho the Great', 'St. Henry', 'Villers', 'Don John of Austria', 'ALFRED', 'Charles Martel', 'The Cid', 'Richard I', 'Joan of Arc', 'Albuquerque', 'Bayard', 'GODFREY', 'St. Leo the Great', 'Gerbert', 'Peter the Hermit', 'Suger', 'Alexander III', 'St. Francis of Assisi', 'INNOCENT III', 'St. Clotilde', 'St. Bathilda', 'St. Stephen of Hungary', 'St. Elizabeth of Hungary', 'Blanche of Castille', 'St. Ferdi- nand III', 'ST. LOUIS', 'The Trouba- dours', 'Boccaccio', 'Rabelais', 'Cervantes', 'La Fontain', 'De Foe', 'ARISTO', 'Leonardo da Vinci', 'Michael Angelo', 'Holbein', 'Poussin', 'Velásquez', 'Teniers', 'RAPHAEL', 'Froissart', 'Camoens', 'The Spanish Romancers', 'Chateau- briand', 'Walter Scott', 'Manzoni', 'TASSO', 'Petrarca', 'Thomas &agrave Kempis', 'Mme. de Lafayette', 'F&eacuten&eacutelon', 'Klopstock', 'Byron', 'MILTON', 'Marco Polo', 'Jacques Coeur', 'Vasco de Gama', 'Napier', 'Lacaille', 'Cook', 'COLUMBUS', 'Benvenuto Cellini', 'Amontons', 'Harrison', 'Dollond', 'Arkwright', 'Cont\u00e9', 'VAUCANSON', 'Stevin', 'Mariotte', 'Papin', 'Black', 'Jouffroy', 'Dalton', 'WATT', 'Bernard de Palissy', 'Guglielmini', 'Duhamel (du Monceau)', 'Saussure', 'Coulomb', 'Carnot', 'MONTGOLFIER', 'Lope de Vega', 'Moreto', 'Rojas', 'Otway', 'Lessing', 'Goethe', 'CALDERON', 'Tirso', 'Vondel', 'Racine', 'Voltaire', 'Metastasio', 'Schiller', 'CORNEILLE', 'Almarcon', 'Mme. de Motteville', 'Mme. de S&eacutevign&eacute', 'Lesage', 'Mme. de Staal', 'Fielding', 'MOLIERE', 'Pergolese', 'Sacchini', 'Gluck', 'Beethoven', 'Rossini', 'Bellini', 'MOZART', 'Albertus Magnus', 'Roger Bacon', 'St. Bonaven- tura', 'Ramus', 'Montaigne', 'Campanella', 'ST. THOMAS AQUINAS', 'Hobbes', 'Pascal', 'Locke', 'Vauvenar- gues', 'Diderot', 'Cabanis', 'LORD BACON', 'Grotius', 'Fontenelle', 'Vico', 'Fr&eacuteret', 'Montesquieu', 'Buffon', 'LEIBNITZ', 'Robertson', 'Adam Smith', 'Kant', 'Condercet', 'Joseph de Maistre', 'Hegel', 'HUME', 'Marie de Molina', 'Cosmo de Medici the Elder', 'Philippe de Comines', 'Isabella of Castille', 'Charles V', 'Henry IV', 'LOUIS XI', "L'H/u0244pital", 'Barneveldt', 'Gustavus Adolphus', 'De Witt', 'Ruyter', 'William III', 'WILLIAM THE SILENT', 'Ximenes', 'Sully', 'Mazarin', 'Colbert', "D'Aranda", 'Turgot', 'RICHELIEU', 'Sidney', 'Franklin', 'Washington', 'Jefferson', 'Bolivar', 'Francia', 'CROMWELL', 'Copernicus', 'Kepler', 'Huyghens', 'James Bernouilli', 'Bradley', 'Volta', 'GALILEO', 'Vieta', 'Wallis', 'Clairaut', 'Euler', "D'Alembert", 'Lagrange', 'NEWTON', 'Bergmann', 'Priestley', 'Cavendish', 'Guyton Morveau', 'Berthollet', 'Berzelius', 'LAVOISIER', 'Harvey', 'Bo/u0235rhaave', 'Linn/u0230us', 'Haller', 'Lamarck', 'Broussais', 'GALL', 'Festival of All the Dead', 'Festival of Holy Women')
+		calendar.SAINTS = ('Prometheus', 'Hercules', 'Orpheus', 'Ulysses', 'Lycurgus', 'Romulus', 'NUMA', 'Belus', 'Sesostris', 'Menu', 'Cyrus', 'Zoroaster', 'The Druids', 'BUDDHA', 'Fo-Hi', 'Lao-Tseu', 'Meng-Tseu', 'Theocrats of Tibet', 'Theocrats of Japan', 'Mano-Capac', 'CONFUCIUS', 'Abraham', 'Samuel', 'Solomon', 'Isaiah', 'St. John  the Baptist', 'Haroun-al-Raschid', 'MUHAMMAD', 'Hesiod', 'Tyrt\u00E6us', 'Anacreon', 'Pindar', 'Sophocles', 'Theocritus', '&#198SCHYLUS', 'Scopas', 'Zeuxis', 'Ictinus', 'Praxiteles', 'Lysippus', 'Apelles', 'PHIDIAS', '&#198sop', 'Plautus', 'Terence', 'Phaedrus', 'Juvenal', 'Lucian', 'ARISTOPHANES', 'Ennius', 'Lucretius', 'Horace', 'Tibullus', 'Ovid', 'Lucan', 'VIRGIL', 'Anaximander', 'Anaximenes', 'Heraclitus', 'Anaxagoras', 'Democritus', 'Herodotus', 'THALES', 'Solon', 'Xenophanes', 'Empodocles', 'Thucydides', 'Archytas', 'Apollonius of Tyana', 'PYTHAGO- RAS', 'Aristippus', 'Antisthenes', 'Zeno', 'Cicero', 'Epictetus', 'Tacitus', 'SOCRATES', 'Xenocrates', 'Philo of Alexandria', 'St. John the Evangelist', 'St. Justin', ' St.Clement of Alexandria', 'Origen', 'PLATO', 'Theophrastus', 'Herophilus', 'Erasistratus', 'Celsus', 'Galen', 'Avicenna', 'HIPPOC- RATES', 'Euclid', 'Arist\u0230us', 'Theodisius of Bithynia', 'Hero', 'Pappus', 'Diophantus', 'APOLLONIUS', 'Eudoxus', 'Pytheas', 'Aristarchus', 'Eratos- thenes', 'Ptolemy', 'Albategnius', 'HIPPARCHUS', 'Varro', 'Columella', 'Vitruvius', 'Strabo', 'Frontinus', 'Plutarch', 'PLINY THE ELDER', 'Miltiades', 'Leonidas', 'Aristides', 'Cimon', 'Xenophon', 'Phocion', 'THEMISTOCLES', 'Pericles', 'Philip', 'Demos- thenes', 'Ptolemy Lagus', 'Philopoemen', 'Polybius', 'ALEXANDER', 'Junius Brutus', 'Camillus', 'Fabricius', 'Hannibal', 'Paulus Aemilius', 'Marius', 'SCIPIO', 'Augustus', 'Vespasian', 'Hadrian', 'Antonius', 'Papinian', 'Alexander Severus', 'TRAJAN', 'St. Luke', 'St. Cyprian', ' St.Athanasius', 'St. Jerome', 'St. Ambrose', 'St. Monica', ' St.AUGUSTINE', 'Constantine', 'Theodosius', 'St. Chrysos- tom', ' St.Genevieve of Paris', 'St. Pulcheria', 'St. Gregory the Great', 'HILDEBRAND', 'St. Benedict', 'St. Boniface', 'St. Isidore of Seville', 'Lanfranc', 'Heloise', "Arch'ts of Middle Ages", ' St.BERNARD', 'St. Francis Xavier', 'St. Charles Borromeo', 'St. Theresa', 'St. Vincent de Paul', 'Bourdaloue', 'William Penn', 'BOSSUET', 'Theodoric the Great', 'Pelayo', 'Otho the Great', 'St. Henry', 'Villers', 'Don John of Austria', 'ALFRED', 'Charles Martel', 'The Cid', 'Richard I', 'Joan of Arc', 'Albuquerque', 'Bayard', 'GODFREY', 'St. Leo the Great', 'Gerbert', 'Peter the Hermit', 'Suger', 'Alexander III', 'St. Francis of Assisi', 'INNOCENT III', 'St. Clotilde', 'St. Bathilda', 'St. Stephen of Hungary', 'St. Elizabeth of Hungary', 'Blanche of Castille', 'St. Ferdi- nand III', 'ST. LOUIS', 'The Trouba- dours', 'Boccaccio', 'Rabelais', 'Cervantes', 'La Fontain', 'De Foe', 'ARISTO', 'Leonardo da Vinci', 'Michael Angelo', 'Holbein', 'Poussin', 'Velásquez', 'Teniers', 'RAPHAEL', 'Froissart', 'Camoens', 'The Spanish Romancers', 'Chateau- briand', 'Walter Scott', 'Manzoni', 'TASSO', 'Petrarca', 'Thomas &agrave Kempis', 'Mme. de Lafayette', 'F&eacuten&eacutelon', 'Klopstock', 'Byron', 'MILTON', 'Marco Polo', 'Jacques Coeur', 'Vasco de Gama', 'Napier', 'Lacaille', 'Cook', 'COLUMBUS', 'Benvenuto Cellini', 'Amontons', 'Harrison', 'Dollond', 'Arkwright', 'Cont\u00e9', 'VAUCANSON', 'Stevin', 'Mariotte', 'Papin', 'Black', 'Jouffroy', 'Dalton', 'WATT', 'Bernard de Palissy', 'Guglielmini', 'Duhamel (du Monceau)', 'Saussure', 'Coulomb', 'Carnot', 'MONTGOLFIER', 'Lope de Vega', 'Moreto', 'Rojas', 'Otway', 'Lessing', 'Goethe', 'CALDERON', 'Tirso', 'Vondel', 'Racine', 'Voltaire', 'Metastasio', 'Schiller', 'CORNEILLE', 'Almarcon', 'Mme. de Motteville', 'Mme. de S&eacutevign&eacute', 'Lesage', 'Mme. de Staal', 'Fielding', 'MOLIERE', 'Pergolese', 'Sacchini', 'Gluck', 'Beethoven', 'Rossini', 'Bellini', 'MOZART', 'Albertus Magnus', 'Roger Bacon', 'St. Bonaven- tura', 'Ramus', 'Montaigne', 'Campanella', 'ST. THOMAS AQUINAS', 'Hobbes', 'Pascal', 'Locke', 'Vauvenar- gues', 'Diderot', 'Cabanis', 'LORD BACON', 'Grotius', 'Fontenelle', 'Vico', 'Fr&eacuteret', 'Montesquieu', 'Buffon', 'LEIBNITZ', 'Robertson', 'Adam Smith', 'Kant', 'Condercet', 'Joseph de Maistre', 'Hegel', 'HUME', 'Marie de Molina', 'Cosmo de Medici the Elder', 'Philippe de Comines', 'Isabella of Castille', 'Charles V', 'Henry IV', 'LOUIS XI', "L'H/u0244pital", 'Barneveldt', 'Gustavus Adolphus', 'De Witt', 'Ruyter', 'William III', 'WILLIAM THE SILENT', 'Ximenes', 'Sully', 'Mazarin', 'Colbert', "D'Aranda", 'Turgot', 'RICHELIEU', 'Sidney', 'Franklin', 'Washington', 'Jefferson', 'Bolivar', 'Francia', 'CROMWELL', 'Copernicus', 'Kepler', 'Huyghens', 'James Bernouilli', 'Bradley', 'Volta', 'GALILEO', 'Vieta', 'Wallis', 'Clairaut', 'Euler', "D'Alembert", 'Lagrange', 'NEWTON', 'Bergmann', 'Priestley', 'Cavendish', 'Guyton Morveau', 'Berthollet', 'Berzelius', 'LAVOISIER', 'Harvey', 'Bo/u0235rhaave', 'Linn/u0230us', 'Haller', 'Lamarck', 'Broussais', 'GALL', 'Festival of All the Dead', 'Festival of Holy Women')
 		calendar.LEAPSAINTS = ('Cadmus', 'Theseus', 'Tiresias', '', '', '', '', 'Semiramus', '', '', '', '', 'Ossian', '', '', '', '', '', '', 'Tameha-meha', '', 'Joseph', '', 'David', '', '', 'Abderrah-man', '', '', 'Sappho', '', '', 'Euripides', 'Longus', '', '', '', '', '', '', '', '', 'Pilpay', '', 'Menander', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'Leucippus', '', '', '', '', '', '', 'Philolaus', '', '', '', '', '', 'Pliny the Younger', 'Arrian', '', '', '', '', '', 'St. Iren&#230us', '', 'Tertullian', '', '', '', '', '', '', 'Averrhoes', '', '', '', '', 'Ctesibius', '', '', '', 'Aratus', 'Nearchus', 'Berosus', 'Sosigenes', '', 'Nasir-Eddin', '', '', '', '', '', '', '', '', '', '', '', '', '', 'Epaminon-das', '', '', '', '', '', '', '', '', '', 'Cincinnatus', 'Regulus', '', '', 'The Gracchi', '', 'M&#230cenas', 'Titus', 'Nerva', 'Marcus Aurelius', 'Ulpian', 'Aetius', '', 'St. James', '', '', '', '', '', '', '', '', 'St. Basil', '', 'Marcian', '', '', 'St. Anthony', 'St. Austin', 'St. Bruno', 'St. Anselm', 'Beatrice', 'St. Benezet', '', 'Ignatius Loyola', 'Fredrick Borromeo', 'St.Catharineof Siena', "Abb&eacute de l'Ep&eacutee", 'ClaudeFleury', 'George Fox', '', '', '', 'Henry the Fowler', '', 'La Valette', 'JohnSobieski', '', '', 'Tancred', 'Saladin', 'Marina', 'Sir Walter Raleigh', '', '', 'Leo IV', 'PeterDamian', '', 'St. Eligius', 'Becket', 'St. Dominic', '', '', 'St. Mathilda of Tuscany', 'Mathias Corvinus', '', '', 'Alfonso X', '', '', 'Chaucer', 'Swift', '', 'Burns', 'Goldsmith', '', 'Titian', 'Paul Veronese', 'Rembrandt', 'Lesueuer', 'Murillo', 'Rubens', '', 'Joinville', 'Spenser', '', '', 'James Fenimore Cooper', '', '', '', 'L. of Grana-da & Bunyan', 'Mme. de Sta&#235l', 'St. Francisof Sales', 'Gessner', '&Eacute. Mercoeur & Shelly', '', 'Chardin', 'Gresham', 'Magellan', 'Briggs', 'Delambre', 'Tasman', '', '', 'Wheatstone', 'Pierre Leroy', 'Graham', 'Jacquard', '', '', 'Torricelli', 'Boyle', 'Worcester', '', 'Fulton', 'Thilorier', '', '', 'Riquet', 'Bourgelat', 'Bouguer', 'Borda', 'Vauban', '', 'Montalvan', 'Guillem de Castro', 'Guevara', '', '', '', '', '', '', '', '', 'Alfieri', '', '', '', 'Mme. Roland', 'Lady Montagu', 'Sterne', 'Miss Edgeworth', 'Richardson', '', 'Palestrina', 'Gr&eacutetry', 'Lully', 'Handel', 'Weber', 'Donizeti', '', 'John of Salisbury', 'Raymond Lully', 'Joachim', 'The Cardinal of Cusa', 'Erasmus', 'Sir Thomas More', '', 'Spinoza', 'Giordano Bruno', 'Male-branche', 'Mme. de Lambert', 'Duclos', 'GeorgeLeroy', '', 'Cujas', 'Maupertuis', 'Herder', 'Winckle-mann', "D'Aguesseau", 'Oken', '', 'Gibbon', 'Dunoyer', 'Fichte', 'Ferguson', 'Bonald', 'Sophie Germain', '', '', '', 'Guicciardini', '', 'Sixtus V', '', '', '', '', '', '', '', '', '', '', 'Oxenstiern', 'Walpole', 'Louis XIV', 'Pombal', 'Campo-manes', '', 'Lambert', 'Hampden', 'Kosciusko', 'Madison', "Toussaint L'Ouverture", '', '', 'Tycho Brah&eacute', 'Halley', 'Varignon', 'John Bernouilli', 'R&#246mer', 'Sauveur', '', 'Harriot', 'Fermat', 'Poinsot', 'Monge', 'Daniel Bernouilli', 'Joseph Fourier', '', 'Scheele', 'Davy', '', 'Geoffroy', '', 'Ritter', '', 'Charles Bell', 'Stahl & Barthez', 'Bernard de Jussieu', "Vicq-d'Azyr", 'Blainville', 'Morgagni', '', '', 'Festival of Holy Women')
 
 
@@ -81,25 +81,19 @@ class AlternateCal(object):
 		class AlternateDate(object):
 			def __init__(self, gregorian, calendar):
 				self.calendar = calendar
+				self.is_leap = calendar.is_leap(gregorian.year)
+				
 				self.year = gregorian.year - calendar.year_offset
-				self.is_leap = False
-				if isleap(gregorian.year):
-					self.is_leap = True
-					
 				self.day_of_year = gregorian.timetuple().tm_yday
-				self.month = ((self.day_of_year - 1) / calendar.days_in_a_month) + 1
+				self.month = ((self.day_of_year - 1) // calendar.days_in_a_month) + 1
 				self.day = self.day_of_year % calendar.days_in_a_month or calendar.days_in_a_month
+				self.weekday = self.day % calendar.days_in_a_week or calendar.days_in_a_week
 				
 				self.month_name = calendar.get_month_name(self.month)
-				
-				if self.is_leap and calendar.LEAPSAINTS[self.day_of_year - 1]:
-					self.day_name = calendar.LEAPSAINTS[self.day_of_year - 1]
-				else:
-					self.day_name = calendar.SAINTS[self.day_of_year - 1]
-				self.weekday = self.day % calendar.days_in_a_week or calendar.days_in_a_week
+				self.day_name = calendar.get_day_name(self.day_of_year, self.is_leap)
 				self.weekday_name = calendar.get_weekday_name(self.weekday)
-
-				self.downcast = self.to_gregorian();
+				# gregorian version of self
+				self.downcast = self.to_gregorian()
 				
 			def to_gregorian(self):
 				# get ordinal value of the year, then add the 
@@ -159,6 +153,7 @@ class AlternateCal(object):
 					return self.date_class(args[0], self)
 				except Exception:
 					raise
+	
 	def get_weekday_name(self, weekday):
 		if weekday > len(self.DAYS):
 			return ordinal(weekday) + " Day"
@@ -169,25 +164,45 @@ class AlternateCal(object):
 			return ordinal(n) + " Month"
 		else:
 			return self.MONTHS[(month - 1)]
+	def get_day_name(self, day, is_leap):
+		if is_leap and self.LEAPSAINTS[day - 1]:
+			return self.LEAPSAINTS[day - 1]
+		else:
+			return self.SAINTS[day - 1]
+	def is_leap(self, year):
+		return calendar.isleap(year + self.year_offset)
 
-	def print_cal(self):
-		
-		print ('+------------') * self.days_in_a_week
-		weekdays = ""
-		for weekday in range(1,self.days_in_a_week+1):
-			wkd_name = self.get_weekday_name(weekday)
-			weekdays += ('|'+wkd_name+((12-len(wkd_name))*" "))
-		weekdays += '|'
-		print weekdays
-		print ('|            ') * self.days_in_a_week +'|'
-		print ('|            ') * self.days_in_a_week +'|'
-		print ('|            ') * self.days_in_a_week +'|'
-		print ('|            ') * self.days_in_a_week +'|'
-		print ('|            ') * self.days_in_a_week +'|'
-		print ('+------------') * self.days_in_a_week
+	def print_cal(self, year, month):
+		maxwidth = max(max(map(len, self.SAINTS)),(max(map(len, self.LEAPSAINTS))))
+
+		print("THE {} MONTH OF {}".format(self.name.upper(), self.get_month_name(month).upper()))
+		for week in range(1, self.weeks_in_a_month + 1):	
+			print(('+' + maxwidth * '-') * self.days_in_a_week)
+			
+			weekdays = ""
+			for weekday in range(1, self.days_in_a_week + 1):
+				wkd_name = self.get_weekday_name(weekday)
+				weekdays += ('|'+ wkd_name + ((27 - len(wkd_name)) * " "))
+			weekdays += '|'
+			print(weekdays)
+			
+			height = 4
+			for i in range(height):
+				print(('|' + maxwidth * " ") * self.days_in_a_week + '|')
+			
+			saints = ""
+			month_offset = (month - 1) * self.weeks_in_a_month * self.days_in_a_week
+			week_offset = month_offset + (week - 1) * self.days_in_a_week
+			for day in range(1, self.days_in_a_week + 1):
+				saint = self.get_day_name(week_offset + day, self.is_leap(year))
+				saints += ('|' + saint + ((27 - len(saint)) * " "))
+			saints += '|'
+			print(saints)
+
+		print(('+' + maxwidth * "-") * self.days_in_a_week)
 
 	def __str__(self):
-		return "The %s calendar, consisting of %d-day weeks, %d-week months, and %d-month years, with %d intercalary day(s)." % (self.name, self.days_in_a_week, self.days_in_a_month / self.days_in_a_week, self.months_in_a_year, self.intercalary_days)
+		return "The %s calendar, consisting of %d-day weeks, %d-week months, and %d-month years, with %d intercalary day(s)." % (self.name, self.days_in_a_week, self.days_in_a_month // self.days_in_a_week, self.months_in_a_year, self.intercalary_days)
 
 if __name__ == "__main__":	
 	import doctest
