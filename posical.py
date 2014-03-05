@@ -22,14 +22,15 @@ def design_calendar():
 	ic_days = days - (d_i_week * w_i_month * m_i_year) => 1
 	"""
 
-	d_i_week = int(raw_input("How many days in a week? "))
-	w_i_month = int(raw_input("How many weeks in a month? "))
-	year_1 = int(raw_input("When is year 1? "))
+	d_i_week = int(raw_input("How many days in a week? ") or 7)
+	w_i_month = int(raw_input("How many weeks in a month? ") or 4)
+	year_1 = int(raw_input("When is year 1? ") or 1788)
 	return AlternateCal(w_i_month, d_i_week, year_1)
 
 class AlternateCal(object):
 	"""
 	>>> cal = AlternateCal()
+	>>> bad_cal = AlternateCal(w_i_month=3, d_i_week=8, year_1=1788)
 	>>> cal.date(2014, 2, 22)
 	positivist date(226, 2, 25)
 	>>> cal.date(datetime.date(2014, 2, 22))
@@ -53,6 +54,10 @@ class AlternateCal(object):
 	positivist date(226, 2, 25)
 	>>> print cal
 	The Positivist calendar, consisting of 7-day weeks, 4-week months, and 13-month years, with 1 intercalary day(s).
+	>>> print bad_cal
+	The Re-Corresponding calendar, consisting of 8-day weeks, 3-week months, and 15-month years, with 5 intercalary day(s).
+	>>> print bad_cal.date(2014, 3, 5)
+	8th Day, March 16, 226: Solon
 	"""
 	
 	def __init__(calendar, w_i_month=4, d_i_week=7, year_1=1788):
@@ -85,19 +90,14 @@ class AlternateCal(object):
 				self.month = ((self.day_of_year - 1) / calendar.days_in_a_month) + 1
 				self.day = self.day_of_year % calendar.days_in_a_month or calendar.days_in_a_month
 				
-				if self.month > len(calendar.MONTHS):
-					self.month_name = ordinal(n) + " Month"
-				else:
-					self.month_name = calendar.MONTHS[(self.month - 1)]
+				self.month_name = calendar.get_month_name(self.month)
+				
 				if self.is_leap and calendar.LEAPSAINTS[self.day_of_year - 1]:
 					self.day_name = calendar.LEAPSAINTS[self.day_of_year - 1]
 				else:
 					self.day_name = calendar.SAINTS[self.day_of_year - 1]
 				self.weekday = self.day % calendar.days_in_a_week or calendar.days_in_a_week
-				if self.weekday > len(calendar.DAYS):
-					self.weekday_name = ordinal(n) + " Month"
-				else:
-					self.weekday_name = calendar.DAYS[self.weekday - 1]
+				self.weekday_name = calendar.get_weekday_name(self.weekday)
 
 				self.downcast = self.to_gregorian();
 				
@@ -159,16 +159,32 @@ class AlternateCal(object):
 					return self.date_class(args[0], self)
 				except Exception:
 					raise
+	def get_weekday_name(self, weekday):
+		if weekday > len(self.DAYS):
+			return ordinal(weekday) + " Day"
+		else:
+			return self.DAYS[weekday - 1]				
+	def get_month_name(self, month):
+		if month > len(self.MONTHS):
+			return ordinal(n) + " Month"
+		else:
+			return self.MONTHS[(month - 1)]
 
 	def print_cal(self):
-		print (self.days_in_a_week * '+------------')
-		print (self.days_in_a_week * '|            ')+'|'
-		print (self.days_in_a_week * '|            ')+'|'
-		print (self.days_in_a_week * '|            ')+'|'
-		print (self.days_in_a_week * '|            ')+'|'
-		print (self.days_in_a_week * '|            ')+'|'
-		print (self.days_in_a_week * '|            ')+'|'
-		print (self.days_in_a_week * '+------------')
+		
+		print ('+------------') * self.days_in_a_week
+		weekdays = ""
+		for weekday in range(1,self.days_in_a_week+1):
+			wkd_name = self.get_weekday_name(weekday)
+			weekdays += ('|'+wkd_name+((12-len(wkd_name))*" "))
+		weekdays += '|'
+		print weekdays
+		print ('|            ') * self.days_in_a_week +'|'
+		print ('|            ') * self.days_in_a_week +'|'
+		print ('|            ') * self.days_in_a_week +'|'
+		print ('|            ') * self.days_in_a_week +'|'
+		print ('|            ') * self.days_in_a_week +'|'
+		print ('+------------') * self.days_in_a_week
 
 	def __str__(self):
 		return "The %s calendar, consisting of %d-day weeks, %d-week months, and %d-month years, with %d intercalary day(s)." % (self.name, self.days_in_a_week, self.days_in_a_month / self.days_in_a_week, self.months_in_a_year, self.intercalary_days)
