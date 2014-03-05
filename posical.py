@@ -176,13 +176,22 @@ class AlternateCal(object):
 		maxwidth = max(max(map(len, self.SAINTS)),(max(map(len, self.LEAPSAINTS))))
 
 		print("THE {} MONTH OF {}".format(self.name.upper(), self.get_month_name(month).upper()))
-		for week in range(1, self.weeks_in_a_month + 1):	
+		for week in range(1, self.weeks_in_a_month + 1):
+			month_offset = (month - 1) * self.weeks_in_a_month * self.days_in_a_week
+			week_offset = (week - 1) * self.days_in_a_week	
 			print(('+' + maxwidth * '-') * self.days_in_a_week)
 			
 			weekdays = ""
 			for weekday in range(1, self.days_in_a_week + 1):
 				wkd_name = self.get_weekday_name(weekday)
-				weekdays += ('|'+ wkd_name + ((27 - len(wkd_name)) * " "))
+				date = week_offset + weekday
+				weekdays += ('|'
+					        + wkd_name 
+					        + (maxwidth - 
+					        	(len(wkd_name)
+					           + len(str(date)))) * " " 
+					        + str(date)
+							)
 			weekdays += '|'
 			print(weekdays)
 			
@@ -191,11 +200,9 @@ class AlternateCal(object):
 				print(('|' + maxwidth * " ") * self.days_in_a_week + '|')
 			
 			saints = ""
-			month_offset = (month - 1) * self.weeks_in_a_month * self.days_in_a_week
-			week_offset = month_offset + (week - 1) * self.days_in_a_week
 			for day in range(1, self.days_in_a_week + 1):
-				saint = self.get_day_name(week_offset + day, self.is_leap(year))
-				saints += ('|' + saint + ((27 - len(saint)) * " "))
+				saint = self.get_day_name(month_offset + week_offset + day, self.is_leap(year))
+				saints += ('|' + ((maxwidth - len(saint)) * " ") + saint)
 			saints += '|'
 			print(saints)
 
