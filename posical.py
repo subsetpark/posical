@@ -1,7 +1,7 @@
 #! usr/bin/env python #
 # -*- coding: utf-8 -*-
 
-import datetime, calendar
+import datetime, calendar,operator
 
 POSIMONTHS = ('Moses', 'Homer', 'Aristotle', 'Archimedes', 'Caesar', 'Saint Paul', 'Charlemagne', 'Dante', 'Gutenberg', 'Shakespeare', 'Descartes', 'Frederick', 'Bichat', 'Complementary')
 REGMONTHS = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'October', 'November', 'December', 'Intercalary')
@@ -203,55 +203,35 @@ class AlternateCal(object):
 			today = self.date()
 			year = today.year
 			month = today.month
-		
-		print("THE {} MONTH OF {}, {}".format(self.name.upper(), self.get_month_name(month).upper(), year))
+		if month == self.months_in_a_year + 1:
+			print("THE {} INTERCALARY DAYS OF THE YEAR {}".format(self.name.upper(), year))
+		else:
+			print("THE {} MONTH OF {}, {}".format(self.name.upper(), self.get_month_name(month).upper(), year))
 		
 		month_offset = (month - 1) * self.weeks_in_a_month * self.days_in_a_week
-		# for date in range(1, self.days_in_a_month + 1):
-		# 	week = date // self.days_in_a_week
-		# 	week_offset = (week - 1) * self.days_in_a_week	
-		# 	weekday = self.get_weekday(date)
-		# 	wkd_name = self.get_weekday_name(weekday)
-		# 	datestr = str(date)
-		# 	saint = self.get_day_name(month_offset + date, self.is_leap(year))
-		# 	print("""
-		# 		+{}
-		# 		|{}{}{}
-		# 		|{}
-		# 		|{}
-		# 		|{}
-		# 		|{}
-		# 		|{}{}
-		# 		""".format(maxwidth * '-', wkd_name, ((maxwidth - (len(wkd_name) + len(datestr))) * " "), datestr,
-		# 					maxwidth * " ", maxwidth * " ", maxwidth * " ", maxwidth * " ",
-		# 					(maxwidth - len(saint)) * " ", saint), end=" ")
-				
-
-		for week in range(1, self.weeks_in_a_month + 1):
+		calbox = []
+		for date in range(1, self.days_in_a_month + 1):
+			week = date // self.days_in_a_week
 			week_offset = (week - 1) * self.days_in_a_week	
-			print(('+' + maxwidth * '-') * self.days_in_a_week)
-			
-			weekdays = ""
-			for weekday in range(1, self.days_in_a_week + 1):
-				wkd_name = self.get_weekday_name(weekday)
-				date = week_offset + weekday
-				weekdays += ('|' + wkd_name + (maxwidth -(len(wkd_name) + len(str(date)))) 
-					* " " + str(date))
-			weekdays += '|'
-			print(weekdays)
+			weekday = self.get_weekday(date)
+			wkd_name = self.get_weekday_name(weekday)
+			datestr = str(date)
+			saint = self.get_day_name(month_offset + date, self.is_leap(year))
 			
 			height = 4
+			box = []
+			box.append("+".ljust(maxwidth, '-'))
+			box.append("|" + wkd_name + datestr.rjust(maxwidth - (len(wkd_name) + len(datestr))))
 			for i in range(height):
-				print(('|' + maxwidth * " ") * self.days_in_a_week + '|')
-			
-			saints = ""
-			for day in range(1, self.days_in_a_week + 1):
-				saint = self.get_day_name(month_offset + week_offset + day, self.is_leap(year))
-				saints += ('|' + ((maxwidth - len(saint)) * " ") + saint)
-			saints += '|'
-			print(saints)
+				box.append("|".ljust(maxwidth))
+			box.append(saint.rjust(maxwidth))
 
-		print(('+' + maxwidth * "-") * self.days_in_a_week)
+			calbox.append(box)
+		# import pdb
+		# pdb.set_trace()
+		calendar_lines = ["".join(line) for line in list(zip(*calbox))]
+		calendar = "\n".join(calendar_lines)
+		print(calendar)
 
 	def __str__(self):
 		return "The %s calendar, consisting of %d-day weeks, %d-week months, and %d-month years, with %d intercalary day(s)." % (self.name, self.days_in_a_week, self.days_in_a_month // self.days_in_a_week, self.months_in_a_year, self.intercalary_days)
