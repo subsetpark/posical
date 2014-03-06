@@ -93,7 +93,7 @@ class AlternateCal(object):
 				self.calendar = calendar
 				self.is_leap = calendar.is_leap(self.to_gregorian().year)
 								
-				self.weekday = self.day % calendar.days_in_a_week or calendar.days_in_a_week
+				self.weekday = calendar.get_weekday(self.day)
 				self.month_name = calendar.get_month_name(self.month)
 				self.day_name = calendar.get_day_name(self.day_of_year, self.is_leap)
 				self.weekday_name = calendar.get_weekday_name(self.weekday)
@@ -175,6 +175,8 @@ class AlternateCal(object):
 			year, month, day = args
 			return self.date_class(year, month, day, self)
 	
+	def get_weekday(self, day):
+		return day % self.days_in_a_week or self.days_in_a_week
 	def get_weekday_name(self, weekday):
 		if weekday > len(self.DAYS):
 			return ordinal(weekday) + " Day"
@@ -186,22 +188,46 @@ class AlternateCal(object):
 		else:
 			return self.MONTHS[(month - 1)]
 	def get_day_name(self, day, is_leap):
-		if is_leap and self.LEAPSAINTS[day - 1]:
+		if day > len(self.SAINTS):
+			return ""
+		elif is_leap and self.LEAPSAINTS[day - 1]:
 			return self.LEAPSAINTS[day - 1]
 		else:
 			return self.SAINTS[day - 1]
 	def is_leap(self, year):
 		return calendar.isleap(year + self.year_offset)
 
-	def print_cal(self, year=None, month=None):
+	def print_month(self, year=None, month=None):
 		maxwidth = max(max(map(len, self.SAINTS)),(max(map(len, self.LEAPSAINTS))))
 		if not year or not month:
 			today = self.date()
 			year = today.year
 			month = today.month
-		print("THE {} MONTH OF {}".format(self.name.upper(), self.get_month_name(month).upper()))
+		
+		print("THE {} MONTH OF {}, {}".format(self.name.upper(), self.get_month_name(month).upper(), year))
+		
+		month_offset = (month - 1) * self.weeks_in_a_month * self.days_in_a_week
+		# for date in range(1, self.days_in_a_month + 1):
+		# 	week = date // self.days_in_a_week
+		# 	week_offset = (week - 1) * self.days_in_a_week	
+		# 	weekday = self.get_weekday(date)
+		# 	wkd_name = self.get_weekday_name(weekday)
+		# 	datestr = str(date)
+		# 	saint = self.get_day_name(month_offset + date, self.is_leap(year))
+		# 	print("""
+		# 		+{}
+		# 		|{}{}{}
+		# 		|{}
+		# 		|{}
+		# 		|{}
+		# 		|{}
+		# 		|{}{}
+		# 		""".format(maxwidth * '-', wkd_name, ((maxwidth - (len(wkd_name) + len(datestr))) * " "), datestr,
+		# 					maxwidth * " ", maxwidth * " ", maxwidth * " ", maxwidth * " ",
+		# 					(maxwidth - len(saint)) * " ", saint), end=" ")
+				
+
 		for week in range(1, self.weeks_in_a_month + 1):
-			month_offset = (month - 1) * self.weeks_in_a_month * self.days_in_a_week
 			week_offset = (week - 1) * self.days_in_a_week	
 			print(('+' + maxwidth * '-') * self.days_in_a_week)
 			
