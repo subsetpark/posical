@@ -165,7 +165,10 @@ class AlternateCal(object):
 	# create "native" date
 	def date(self, *args):
 		if not args:
-			return self.date_class(datetime.date.today(), self)
+			return self.from_date()
+		else:
+			year, month, day = args
+			return self.date_class(year, month, day, self)
 	
 	def get_weekday_name(self, weekday):
 		if weekday > len(self.DAYS):
@@ -174,7 +177,7 @@ class AlternateCal(object):
 			return self.DAYS[weekday - 1]				
 	def get_month_name(self, month):
 		if month > len(self.MONTHS):
-			return ordinal(n) + " Month"
+			return ordinal(month) + " Month"
 		else:
 			return self.MONTHS[(month - 1)]
 	def get_day_name(self, day, is_leap):
