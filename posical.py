@@ -204,19 +204,29 @@ class AlternateCal(object):
 			year = today.year
 			month = today.month
 		if month == self.months_in_a_year + 1:
+			intercal = True
 			print("THE {} INTERCALARY DAYS OF THE YEAR {}".format(self.name.upper(), year))
 		else:
+			intercal = False
 			print("THE {} MONTH OF {}, {}".format(self.name.upper(), self.get_month_name(month).upper(), year))
 		
 		month_offset = (month - 1) * self.weeks_in_a_month * self.days_in_a_week
 		calbox = []
 		for date in range(1, self.days_in_a_month + 1):
+			day_of_year = month_offset + date
+			if day_of_year > len(self.SAINTS):
+				break
 			week = date // self.days_in_a_week
 			week_offset = (week - 1) * self.days_in_a_week	
-			weekday = self.get_weekday(date)
-			wkd_name = self.get_weekday_name(weekday)
-			datestr = str(date)
-			saint = self.get_day_name(month_offset + date, self.is_leap(year))
+			if not intercal:
+				weekday = self.get_weekday(date)
+				wkd_name = self.get_weekday_name(weekday)
+				datestr = str(date)
+			else:
+				weekday = 0
+				wkd_name = ""
+				datestr = ""
+			saint = self.get_day_name(day_of_year, self.is_leap(year))
 			
 			height = 4
 			box = []
@@ -224,11 +234,10 @@ class AlternateCal(object):
 			box.append("|" + wkd_name + datestr.rjust(maxwidth - (len(wkd_name) + len(datestr))))
 			for i in range(height):
 				box.append("|".ljust(maxwidth))
-			box.append(saint.rjust(maxwidth))
+			box.append("|" + saint.rjust(maxwidth-1))
 
 			calbox.append(box)
-		# import pdb
-		# pdb.set_trace()
+		
 		calendar_lines = ["".join(line) for line in list(zip(*calbox))]
 		calendar = "\n".join(calendar_lines)
 		print(calendar)
