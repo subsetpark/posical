@@ -87,7 +87,7 @@ class AlternateCal(object):
 				self.month = month
 				self.day = day
 				self.day_of_year = (month - 1) * calendar.weeks_in_a_month * calendar.days_in_a_week + day
-				if self.day_of_year > 365:
+				if self.day_of_year > 366:
 					raise ValueError("This day cannot exist.")
 
 				self.calendar = calendar
