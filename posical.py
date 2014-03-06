@@ -35,13 +35,13 @@ class AlternateCal(object):
 	>>> cal.from_date(datetime.date(2014, 2, 22))
 	positivist date(226, 2, 25)
 	>>> print(cal.from_date(2001, 1, 1))
-	Monday, Moses 1, 213: Prometheus
+	Monday, 1st of Moses, 213: Prometheus
 	>>> print(cal.from_date(2001, 5, 10))
-	Thursday, Caesar 18, 213: Hannibal
+	Thursday, 18th of Caesar, 213: Hannibal
 	>>> print(cal.from_date(2001, 12, 31))
 	Festival of All the Dead, 213
 	>>> print(cal.from_date(2000, 2, 29))
-	Thursday, Aristotle 4, 212: Anaxagoras
+	Thursday, 4th of Aristotle, 212: Anaxagoras
 	>>> print(cal.from_date(2000, 12, 31))
 	Festival of Holy Women, 212
 	>>> print(cal.from_date(2014, 2, 22).to_gregorian())
@@ -56,7 +56,10 @@ class AlternateCal(object):
 	>>> print(bad_cal)
 	The Crepuscular calendar, consisting of 8-day weeks, 3-week months, and 15-month years, with 5 intercalary day(s).
 	>>> print(bad_cal.from_date(2014, 3, 5))
-	8th Day, March 16, 226: Solon
+	8th Day, 16th of March, 226: Solon
+	>>> next_day = datetime.timedelta(days = 1)
+	>>> print(bad_cal.from_date(2011,3,11) + next_day)
+	Sunday, 23rd of March, 223: Aristippus
 	"""
 	
 	def __init__(calendar, w_i_month=4, d_i_week=7, year_1=1788):
@@ -94,7 +97,6 @@ class AlternateCal(object):
 				self.month_name = calendar.get_month_name(self.month)
 				self.day_name = calendar.get_day_name(self.day_of_year, self.is_leap)
 				self.weekday_name = calendar.get_weekday_name(self.weekday)
-				# gregorian version of self
 				
 				
 			def to_gregorian(self):
@@ -105,10 +107,10 @@ class AlternateCal(object):
 			
 			def __str__(self):
 				if self.month is calendar.months_in_a_year + 1:
-					return "%s, %d" % (self.day_name, self.year)
+					return "{}, {}".format(self.day_name, self.year)
 				else:
-					return "%s, %s %d, %d: %s" % (self.weekday_name, self.month_name, 
-												   self.day, self.year, self.day_name)
+					return "{}, {} of {}, {}: {}".format(self.weekday_name, ordinal(self.day), self.month_name, 
+												    self.year, self.day_name)
 				
 			def __repr__(self):
 				return '%s date(%d, %d, %d)' % (calendar.name.lower(), self.year, self.month, self.day)
