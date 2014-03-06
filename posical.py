@@ -79,21 +79,22 @@ class AlternateCal(object):
 
 
 		class AlternateDate(object):
-			def __init__(self, gregorian, calendar):
+			def __init__(self, year, month, day, calendar):
+				self.year = year
+				self.month = month
+				self.day = day
+				self.day_of_year = (month - 1) * calendar.weeks_in_a_month * calendar.days_in_a_week + day
+				self.to_gregorian()
+
 				self.calendar = calendar
-				self.is_leap = calendar.is_leap(gregorian.year)
-				
-				self.year = gregorian.year - calendar.year_offset
-				self.day_of_year = gregorian.timetuple().tm_yday
-				self.month = ((self.day_of_year - 1) // calendar.days_in_a_month) + 1
-				self.day = self.day_of_year % calendar.days_in_a_month or calendar.days_in_a_month
+				self.is_leap = calendar.is_leap(self.to_gregorian().year)
+								
 				self.weekday = self.day % calendar.days_in_a_week or calendar.days_in_a_week
-				
 				self.month_name = calendar.get_month_name(self.month)
 				self.day_name = calendar.get_day_name(self.day_of_year, self.is_leap)
 				self.weekday_name = calendar.get_weekday_name(self.weekday)
 				# gregorian version of self
-				self.downcast = self.to_gregorian()
+				
 				
 			def to_gregorian(self):
 				# get ordinal value of the year, then add the 
@@ -112,47 +113,58 @@ class AlternateCal(object):
 				return '%s date(%d, %d, %d)' % (calendar.name.lower(), self.year, self.month, self.day)
 			
 			def __add__(self, timedelta):
-				return self.calendar.from_date((self.downcast + timedelta))
+				return self.calendar.from_date((self.to_gregorian() + timedelta))
 				
 			def __sub__(self, timedelta):
-				return self.calendar.from_date((self.downcast - timedelta))
+				return self.calendar.from_date((self.to_gregorian() - timedelta))
 
 			def __eq__(self, other_date):
 				othercast = (other_date.to_gregorian())
-				return self.downcast == othercast
+				return self.to_gregorian() == othercast
 			
 			def __gt__(self, other_date):
 				othercast = (other_date.to_gregorian())
-				return self.downcast > othercast
+				return self.to_gregorian() > othercast
 			
 			def __lt__(self, other_date):
 				othercast = (other_date.to_gregorian())
-				return self.downcast < othercast	
+				return self.to_gregorian() < othercast	
 			
 			def __ge__(self, other_date):
 				othercast = (other_date.to_gregorian())
-				return self.downcast >= othercast
+				return self.to_gregorian() >= othercast
 				
 			def __le__(self, other_date):
 				othercast = (other_date.to_gregorian())
-				return self.downcast <= othercast
+				return self.to_gregorian() <= othercast
 
 		calendar.date_class = AlternateDate
 
+	# create a date from gregorian date
 	def from_date(self, *args):
 		if not args:
-			return self.date_class(datetime.date.today(), self)
+			gregorian = datetime.date.today()
 		else:
 			try:
-				# import pdb
-				# pdb.set_trace()
 				year, month, day = args
-				return self.date_class(datetime.date(year, month, day), self)
+				gregorian = datetime.date(year, month, day)
+				# return self.date_class(datetime.date(year, month, day), self)
 			except Exception:
 				try:
-					return self.date_class(args[0], self)
+					gregorian = args[0]
+					# return self.date_class(args[0], self)
 				except Exception:
 					raise
+		year = gregorian.year - self.year_offset
+		day_of_year = gregorian.timetuple().tm_yday
+		month = ((day_of_year - 1) // self.days_in_a_month) + 1
+		day = day_of_year % self.days_in_a_month or self.days_in_a_month
+		return self.date_class(year, month, day, self)
+
+	# create "native" date
+	def date(self, *args):
+		if not args:
+			return self.date_class(datetime.date.today(), self)
 	
 	def get_weekday_name(self, weekday):
 		if weekday > len(self.DAYS):
