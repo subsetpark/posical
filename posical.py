@@ -190,7 +190,7 @@ class AlternateCal(object):
 	def is_leap(self, year):
 		return calendar.isleap(year + self.year_offset)
 
-	def print_cal(self, year, month):
+	def print_cal(self, year=datetime.datetime.now().year, month=datetime.datetime.now().month):
 		maxwidth = max(max(map(len, self.SAINTS)),(max(map(len, self.LEAPSAINTS))))
 
 		print("THE {} MONTH OF {}".format(self.name.upper(), self.get_month_name(month).upper()))
@@ -203,13 +203,8 @@ class AlternateCal(object):
 			for weekday in range(1, self.days_in_a_week + 1):
 				wkd_name = self.get_weekday_name(weekday)
 				date = week_offset + weekday
-				weekdays += ('|'
-					        + wkd_name 
-					        + (maxwidth - 
-					        	(len(wkd_name)
-					           + len(str(date)))) * " " 
-					        + str(date)
-							)
+				weekdays += ('|' + wkd_name + (maxwidth -(len(wkd_name) + len(str(date)))) 
+					* " " + str(date))
 			weekdays += '|'
 			print(weekdays)
 			
