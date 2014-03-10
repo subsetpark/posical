@@ -183,7 +183,7 @@ class AlternateCal(object):
 		return day % self.days_in_a_week or self.days_in_a_week
 	def get_weekday_name(self, weekday):
 		if weekday > len(self.DAYS):
-			return ordinal(weekday) + " Day"
+			return ordinal(weekday) + " Weekday"
 		else:
 			return self.DAYS[weekday - 1]				
 	def get_month_name(self, month):
