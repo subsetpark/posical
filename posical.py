@@ -235,14 +235,14 @@ class AlternateCal(object):
 				
 				height = 4
 				box = []
-				box.append("+".ljust(maxwidth, '-'))
+				box.append("+".ljust(maxwidth + 1, '-'))
 				if wkd_name:
-					box.append("|" + wkd_name + datestr.rjust(maxwidth - (len(wkd_name) + len(datestr))))
+					box.append("|" + wkd_name.ljust(maxwidth - len(datestr)) + datestr)
 				else:
-					box.append("|".ljust(maxwidth))
+					box.append("|".ljust(maxwidth + 1))
 				for i in range(height):
-					box.append("|".ljust(maxwidth))
-				box.append("|" + saint.rjust(maxwidth-1))
+					box.append("|".ljust(maxwidth + 1))
+				box.append("|" + saint.rjust(maxwidth))
 
 				calbox.append(box)
 			
