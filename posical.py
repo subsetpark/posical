@@ -10,6 +10,10 @@ REGMONTHS = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'Oc
 def ordinal(n):
 	return "%d%s" % (n,"tsnrhtdd"[(n/10%10!=1)*(n%10<4)*n%10::4])
 
+def horicat(strings):
+	lines = ["".join(line) for line in list(zip(*strings))]
+	return "\n".join(lines)
+
 def design_calendar():
 	"""
 	Reference math from Calca:
@@ -198,6 +202,7 @@ class AlternateCal(object):
 		return calendar.isleap(year + self.year_offset)
 
 	def print_month(self, year=None, month=None):
+
 		maxwidth = max(max(map(len, self.SAINTS)),(max(map(len, self.LEAPSAINTS))))
 		if not year or not month:
 			today = self.date()
@@ -209,38 +214,40 @@ class AlternateCal(object):
 		else:
 			intercal = False
 			print("THE {} MONTH OF {}, {}".format(self.name.upper(), self.get_month_name(month).upper(), year))
-		
-		month_offset = (month - 1) * self.weeks_in_a_month * self.days_in_a_week
-		calbox = []
-		for date in range(1, self.days_in_a_month + 1):
-			day_of_year = month_offset + date
-			if day_of_year > len(self.SAINTS):
-				break
-			week = date // self.days_in_a_week
-			week_offset = (week - 1) * self.days_in_a_week	
-			if not intercal:
-				weekday = self.get_weekday(date)
-				wkd_name = self.get_weekday_name(weekday)
-				datestr = str(date)
-			else:
-				weekday = 0
-				wkd_name = ""
-				datestr = ""
-			saint = self.get_day_name(day_of_year, self.is_leap(year))
-			
-			height = 4
-			box = []
-			box.append("+".ljust(maxwidth, '-'))
-			box.append("|" + wkd_name + datestr.rjust(maxwidth - (len(wkd_name) + len(datestr))))
-			for i in range(height):
-				box.append("|".ljust(maxwidth))
-			box.append("|" + saint.rjust(maxwidth-1))
+	
+		month_offset = (month - 1) * self.weeks_in_a_month * self.days_in_a_week	
+		for week in range(self.weeks_in_a_month):		
+			calbox = []
+			week_offset = (week * self.days_in_a_week)
+			for date in range(1 + week_offset, week_offset + self.days_in_a_week + 1):
+				day_of_year = month_offset + date
+				if day_of_year > len(self.SAINTS):
+					break
+				if not intercal:
+					weekday = self.get_weekday(date)
+					wkd_name = self.get_weekday_name(weekday)
+					datestr = str(date)
+				else:
+					weekday = 0
+					wkd_name = ""
+					datestr = ""
+				saint = self.get_day_name(day_of_year, self.is_leap(year))
+				
+				height = 4
+				box = []
+				box.append("+".ljust(maxwidth, '-'))
+				if wkd_name:
+					box.append("|" + wkd_name + datestr.rjust(maxwidth - (len(wkd_name) + len(datestr))))
+				else:
+					box.append("|".ljust(maxwidth))
+				for i in range(height):
+					box.append("|".ljust(maxwidth))
+				box.append("|" + saint.rjust(maxwidth-1))
 
-			calbox.append(box)
-		
-		calendar_lines = ["".join(line) for line in list(zip(*calbox))]
-		calendar = "\n".join(calendar_lines)
-		print(calendar)
+				calbox.append(box)
+			
+			cal_layout = horicat(calbox)
+			print(cal_layout)
 
 	def __str__(self):
 		return "The %s calendar, consisting of %d-day weeks, %d-week months, and %d-month years, with %d intercalary day(s)." % (self.name, self.days_in_a_week, self.days_in_a_month // self.days_in_a_week, self.months_in_a_year, self.intercalary_days)
