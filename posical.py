@@ -159,12 +159,9 @@ class AlternateCal(object):
 				year, month, day = args
 				gregorian = datetime.date(year, month, day)
 				# return self.date_class(datetime.date(year, month, day), self)
-			except Exception:
-				try:
-					gregorian = args[0]
+			except ValueError:
+				gregorian = args[0]
 					# return self.date_class(args[0], self)
-				except Exception:
-					raise
 		year = gregorian.year - self.year_offset
 		day_of_year = gregorian.timetuple().tm_yday
 		month = ((day_of_year - 1) // self.days_in_a_month) + 1
