@@ -41,8 +41,6 @@ class AlternateCal(object):
 	positivist date(226, 2, 25)
 	>>> print(cal.from_date(2001, 1, 1))
 	Monday, 1st of Moses, 213: Prometheus
-	>>> print(cal.from_date(2001, 5, 10))
-	Thursday, 18th of Caesar, 213: Hannibal
 	>>> print(cal.from_date(2001, 12, 31))
 	Festival of All the Dead, 213
 	>>> print(cal.from_date(2000, 2, 29))
@@ -51,9 +49,6 @@ class AlternateCal(object):
 	Festival of Holy Women, 212
 	>>> print(cal.from_date(2014, 2, 22).to_gregorian())
 	2014-02-22
-	>>> class New_cal(AlternateCal):
-	...  days_in_a_month = 26
-	>>> cal2 = New_cal()
 	>>> cal.from_date(2014, 2, 22)
 	positivist date(226, 2, 25)
 	>>> print(cal)
