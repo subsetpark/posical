@@ -202,6 +202,9 @@ class AlternateCal(object):
 		return calendar.isleap(year + self.year_offset)
 
 	def print_month(self, year=None, month=None):
+		"""
+		Print out a formatted one-page calendar for the specified year/month.
+		"""
 
 		maxwidth = max(max(map(len, self.SAINTS)),(max(map(len, self.LEAPSAINTS))))
 		if not year or not month:
@@ -232,17 +235,20 @@ class AlternateCal(object):
 					wkd_name = ""
 					datestr = ""
 				saint = self.get_day_name(day_of_year, self.is_leap(year))
+				if day_of_year == self.date().day_of_year:
+					saint = "*" + saint + "*"
 				
 				height = 4
 				box = []
-				box.append("+".ljust(maxwidth + 1, '-'))
+				cap = "|" if day_of_year % self.days_in_a_week == 0 else ""
+				box.append("+".ljust(maxwidth + 1, '-') + cap)
 				if wkd_name:
-					box.append("|" + wkd_name.ljust(maxwidth - len(datestr)) + datestr)
+					box.append("|" + wkd_name.ljust(maxwidth - len(datestr)) + datestr + cap)
 				else:
-					box.append("|".ljust(maxwidth + 1))
+					box.append("|".ljust(maxwidth + 1) + cap)
 				for i in range(height):
-					box.append("|".ljust(maxwidth + 1))
-				box.append("|" + saint.rjust(maxwidth))
+					box.append("|".ljust(maxwidth + 1) + cap)
+				box.append("|" + saint.rjust(maxwidth) + cap)
 
 				calbox.append(box)
 			
