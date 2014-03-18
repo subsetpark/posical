@@ -1,7 +1,8 @@
 #! usr/bin/env python #
 # -*- coding: utf-8 -*-
 
-import datetime, calendar,operator
+import datetime,operator
+import calendar
 
 POSIMONTHS = ('Moses', 'Homer', 'Aristotle', 'Archimedes', 'Caesar', 'Saint Paul', 'Charlemagne', 'Dante', 'Gutenberg', 'Shakespeare', 'Descartes', 'Frederick', 'Bichat', 'Complementary')
 REGMONTHS = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'October', 'November', 'December', 'Intercalary')
@@ -60,10 +61,25 @@ class AlternateCal(object):
 	>>> print(bad_cal)
 	The Crepuscular calendar, consisting of 8-day weeks, 3-week months, and 15-month years, with 5 intercalary day(s).
 	>>> print(bad_cal.from_date(2014, 3, 5))
-	8th Day, 16th of March, 226: Solon
+	8th Weekday, 16th of March, 226: Solon
 	>>> next_day = datetime.timedelta(days = 1)
 	>>> print(bad_cal.from_date(2011,3,11) + next_day)
 	Sunday, 23rd of March, 223: Aristippus
+	>>> cal.date(100, 1, 1) + next_day
+	positivist date(100, 1, 2)
+	>>> cal.date(100, 1, 1) - next_day
+	positivist date(99, 14, 1)
+	>>> cal.date(100, 1, 1) > cal.from_date(2000, 1, 1)
+	False
+	>>> cal.date(100, 1, 1) == cal.from_date(2000, 1, 1)
+	False
+	>>> cal.date(100, 1, 1) < cal.from_date(2000, 1, 1)
+	True
+	>>> cal.from_date(2000, 1, 1) - cal.from_date(1500, 1, 1)
+	datetime.timedelta(182621)
+	>>> import datetime
+	>>> datetime.date(2000, 1, 1) > cal.date()
+	False
 	"""
 	
 	def __init__(calendar, w_i_month=4, d_i_week=7, year_1=1788):
@@ -86,6 +102,7 @@ class AlternateCal(object):
 
 
 		class AlternateDate(object):
+
 			def __init__(self, year, month, day, calendar):
 				self.year = year
 				self.month = month
@@ -94,7 +111,6 @@ class AlternateCal(object):
 				if self.day_of_year > 366:
 					raise ValueError("This day cannot exist.")
 
-				self.calendar = calendar
 				self.is_leap = calendar.is_leap(self.to_gregorian().year)
 								
 				self.weekday = calendar.get_weekday(self.day)
@@ -119,34 +135,24 @@ class AlternateCal(object):
 			def __repr__(self):
 				return '%s date(%d, %d, %d)' % (calendar.name.lower(), self.year, self.month, self.day)
 			
-			def __add__(self, timedelta):
-				return self.calendar.from_date((self.to_gregorian() + timedelta))
-			
+			def __add__(self, arg):
+				return self.calendar.from_date(arg + self.to_gregorian())
+			__radd__ = __add__
 			def __sub__(self, arg):
-				if isinstance(arg, datetime.timedelta):
-					return self.calendar.from_date(self.to_gregorian() - arg)
-				elif "AlternateDate" in str(type(arg)):
-					return datetime.timedelta(days=self.total_days() - arg.total_days())
-
+				return self.calendar.from_date(self.to_gregorian() - arg)
+			def __rsub__(self, arg):
+				return self.calendar.from_date(arg - self.to_gregorian())
 			def __eq__(self, other_date):
-				othercast = (other_date.to_gregorian())
-				return self.to_gregorian() == othercast
-			
+				return other_date == self.to_gregorian()
 			def __gt__(self, other_date):
-				othercast = (other_date.to_gregorian())
-				return self.to_gregorian() > othercast
-			
+				return self.to_gregorian() > other_date
 			def __lt__(self, other_date):
-				othercast = (other_date.to_gregorian())
-				return self.to_gregorian() < othercast	
-			
+				return self.to_gregorian() < other_date
 			def __ge__(self, other_date):
-				othercast = (other_date.to_gregorian())
-				return self.to_gregorian() >= othercast
-				
+				return self.to_gregorian() >= other_date				
 			def __le__(self, other_date):
-				othercast = (other_date.to_gregorian())
-				return self.to_gregorian() <= othercast
+				return self.to_gregorian() <= other_date			
+		AlternateDate.calendar = calendar		
 
 		calendar.date_class = AlternateDate
 
@@ -161,6 +167,8 @@ class AlternateCal(object):
 				# return self.date_class(datetime.date(year, month, day), self)
 			except ValueError:
 				gregorian = args[0]
+				if isinstance(gregorian, datetime.timedelta):
+					return gregorian
 					# return self.date_class(args[0], self)
 		year = gregorian.year - self.year_offset
 		day_of_year = gregorian.timetuple().tm_yday
