@@ -205,18 +205,18 @@ class AlternateCal(object):
 		"""
 		Print out a formatted one-page calendar for the specified year/month.
 		"""
-
-		maxwidth = max(max(map(len, self.SAINTS)),(max(map(len, self.LEAPSAINTS))))
+		page = []
+		maxwidth = max(len(saint) for saint in self.SAINTS + self.LEAPSAINTS)
 		if not year or not month:
 			today = self.date()
 			year = today.year
 			month = today.month
 		if month == self.months_in_a_year + 1:
 			intercal = True
-			print("THE {} INTERCALARY DAYS OF THE YEAR {}".format(self.name.upper(), year))
+			page.append("THE {} INTERCALARY DAYS OF THE YEAR {}".format(self.name.upper(), year))
 		else:
 			intercal = False
-			print("THE {} MONTH OF {}, {}".format(self.name.upper(), self.get_month_name(month).upper(), year))
+			page.append("THE {} MONTH OF {}, {}".format(self.name.upper(), self.get_month_name(month).upper(), year))
 	
 		month_offset = (month - 1) * self.weeks_in_a_month * self.days_in_a_week	
 		for week in range(self.weeks_in_a_month):		
@@ -253,7 +253,8 @@ class AlternateCal(object):
 				calbox.append(box)
 			
 			cal_layout = horicat(calbox)
-			print(cal_layout)
+			page.append(cal_layout)
+		return "\n".join(page)
 
 	def __str__(self):
 		return "The %s calendar, consisting of %d-day weeks, %d-week months, and %d-month years, with %d intercalary day(s)." % (self.name, self.days_in_a_week, self.days_in_a_month // self.days_in_a_week, self.months_in_a_year, self.intercalary_days)
