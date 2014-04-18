@@ -28,13 +28,13 @@ def design_calendar():
 
 	d_i_week = int(input("How many days in a week? ") or 7)
 	w_i_month = int(input("How many weeks in a month? ") or 4)
-	year_1 = int(input("When is year 1? ") or 1788)
+	year_1 = int(input("When is year 1? ") or 1789)
 	return AlternateCal(w_i_month, d_i_week, year_1)
 
 class AlternateCal(object):
 	"""
 	>>> cal = AlternateCal()
-	>>> bad_cal = AlternateCal(w_i_month=3, d_i_week=8, year_1=1788)
+	>>> bad_cal = AlternateCal(w_i_month=3, d_i_week=8, year_1=1789)
 	>>> cal.from_date(2014, 2, 22)
 	positivist date(226, 2, 25)
 	>>> cal.from_date(datetime.date(2014, 2, 22))
@@ -77,7 +77,7 @@ class AlternateCal(object):
 	False
 	"""
 	
-	def __init__(calendar, w_i_month=4, d_i_week=7, year_1=1788):
+	def __init__(calendar, w_i_month=4, d_i_week=7, year_1=1789):
 		calendar.days_in_a_month = d_i_week * w_i_month
 		calendar.days_in_a_week = d_i_week
 		calendar.weeks_in_a_month = w_i_month
