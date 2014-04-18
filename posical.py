@@ -36,34 +36,34 @@ class AlternateCal(object):
 	>>> cal = AlternateCal()
 	>>> bad_cal = AlternateCal(w_i_month=3, d_i_week=8, year_1=1789)
 	>>> cal.from_date(2014, 2, 22)
-	positivist date(226, 2, 25)
+	positivist date(225, 2, 25)
 	>>> cal.from_date(datetime.date(2014, 2, 22))
-	positivist date(226, 2, 25)
+	positivist date(225, 2, 25)
 	>>> print(cal.from_date(2001, 1, 1))
-	Monday, 1st of Moses, 213: Prometheus
+	Monday, 1st of Moses, 212: Prometheus
 	>>> print(cal.from_date(2001, 12, 31))
-	Festival of All the Dead, 213
+	Festival of All the Dead, 212
 	>>> print(cal.from_date(2000, 2, 29))
-	Thursday, 4th of Aristotle, 212: Anaxagoras
+	Thursday, 4th of Aristotle, 211: Anaxagoras
 	>>> print(cal.from_date(2000, 12, 31))
-	Festival of Holy Women, 212
+	Festival of Holy Women, 211
 	>>> print(cal.from_date(2014, 2, 22).to_gregorian())
 	2014-02-22
 	>>> cal.from_date(2014, 2, 22)
-	positivist date(226, 2, 25)
+	positivist date(225, 2, 25)
 	>>> print(cal)
-	The Positivist calendar, consisting of 7-day weeks, 4-week months, and 13-month years, with 1 intercalary day(s).
+	The Positivist calendar, consisting of 7-day weeks, 4-week months, and 13-month years, with 1 epagomenal day(s).
 	>>> print(bad_cal)
-	The Crepuscular calendar, consisting of 8-day weeks, 3-week months, and 15-month years, with 5 intercalary day(s).
+	The Antediluvian calendar, consisting of 8-day weeks, 3-week months, and 15-month years, with 5 epagomenal day(s).
 	>>> print(bad_cal.from_date(2014, 3, 5))
-	8th Weekday, 16th of March, 226: Solon
+	8th Weekday, 16th of March, 225: Solon
 	>>> next_day = datetime.timedelta(days = 1)
 	>>> print(bad_cal.from_date(2011,3,11) + next_day)
-	Sunday, 23rd of March, 223: Aristippus
+	Sunday, 23rd of March, 222: Aristippus
 	>>> cal.date(100, 1, 1) + next_day
 	positivist date(100, 1, 2)
 	>>> cal.date(100, 1, 1) - next_day
-	positivist date(99, 14, 1)
+	positivist date(99, 14, 2)
 	>>> cal.date(100, 1, 1) > cal.from_date(2000, 1, 1)
 	False
 	>>> cal.date(100, 1, 1) == cal.from_date(2000, 1, 1)
@@ -82,7 +82,7 @@ class AlternateCal(object):
 		calendar.days_in_a_week = d_i_week
 		calendar.weeks_in_a_month = w_i_month
 		calendar.months_in_a_year = 365 // calendar.days_in_a_month
-		calendar.intercalary_days = 365 % calendar.days_in_a_month
+		calendar.epagomenal_days = 365 % calendar.days_in_a_month
 		name_choices = ('New Adjusted', 'Utilitarian', 'Lycurgian', 'Multi-Manifold', 'Positivist', 'Crepuscular', 'Urquhart', 'Adamantine', 'Organic Non-Repeating', 'Antediluvian', 'Re-Corresponding')
 		calendar.name = name_choices[hash((w_i_month, d_i_week, year_1)) % 11]
 		calendar.year_offset = year_1
@@ -257,10 +257,10 @@ class AlternateCal(object):
 		return "\n".join(page)
 
 	def __str__(self):
-		return "The %s calendar, consisting of %d-day weeks, %d-week months, and %d-month years, with %d intercalary day(s)." % (self.name, self.days_in_a_week, self.days_in_a_month // self.days_in_a_week, self.months_in_a_year, self.intercalary_days)
+		return "The %s calendar, consisting of %d-day weeks, %d-week months, and %d-month years, with %d epagomenal day(s)." % (self.name, self.days_in_a_week, self.days_in_a_month // self.days_in_a_week, self.months_in_a_year, self.epagomenal_days)
 
 if __name__ == "__main__":	
 	import doctest
 	doctest.testmod()
-	print(AlternateCal().print_month())
+	# print(AlternateCal().print_month())
 	

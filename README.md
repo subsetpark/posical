@@ -1,7 +1,7 @@
 posical
 =======
 
-In 1849 the French philosopher August Comte proposed the *Positivist Calendar*, a new and improved solar calendar with 13 months of 28 days each and 1 intercalary day outside of the months (2 on leap years). This numbering system had the pleasant effect of maintaining regularity throughout the months and years; every month has the same number of days, and that number is divisible by 7 (the number of days in a week, you might recall), such that any given day of the month (and year) is always the same day of the week.
+In 1849 the French philosopher August Comte proposed the *Positivist Calendar*, a new and improved solar calendar with 13 months of 28 days each and 1 epagomenal day outside of the months (2 on leap years). This numbering system had the pleasant effect of maintaining regularity throughout the months and years; every month has the same number of days, and that number is divisible by 7 (the number of days in a week, you might recall), such that any given day of the month (and year) is always the same day of the week.
 
 In addition to this delightfully rational reworking, Msr. Comte saw fit to assign every day to a saint of his own canon—dedicating every day of the year to a great figure in the history of humanity. The months, too, were renamed according to his humanist lights.
 
@@ -17,7 +17,7 @@ But that's not all! The far-sighted creators of `posical` have seen fit to build
 ``` .py
 >>> cal = AlternateCal()
 >>> print(cal)
-The Positivist calendar, consisting of 7-day weeks, 4-week months, and 13-month years, with 1 intercalary day(s).
+The Positivist calendar, consisting of 7-day weeks, 4-week months, and 13-month years, with 1 epagomenal day(s).
 
 ```
 
@@ -51,7 +51,7 @@ How many days in a week? 8
 How many weeks in a month? 6
 When is year 1? 550
 >>> print(bad_cal)
-The Lycurgian calendar, consisting of 8-day weeks, 6-week months, and 7-month years, with 29 intercalary day(s).
+The Lycurgian calendar, consisting of 8-day weeks, 6-week months, and 7-month years, with 29 epagomenal day(s).
 >>> tomorrow = bad_cal.from_date(2014,3,19)
 >>> tomorrow
 lycurgian date(1464, 2, 30)
