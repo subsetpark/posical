@@ -83,7 +83,7 @@ class AlternateCal(object):
 		calendar.weeks_in_a_month = w_i_month
 		calendar.months_in_a_year = 365 // calendar.days_in_a_month
 		calendar.intercalary_days = 365 % calendar.days_in_a_month
-		name_choices = ('New Adjusted', 'Utilitarian', 'Lycurgian', 'Multi-Manifold', 'Crepuscular', 'Urquhart', 'Adamantine', 'Organic Non-Repeating', 'Antediluvian', 'Re-Corresponding', 'Positivist')
+		name_choices = ('New Adjusted', 'Utilitarian', 'Lycurgian', 'Multi-Manifold', 'Positivist', 'Crepuscular', 'Urquhart', 'Adamantine', 'Organic Non-Repeating', 'Antediluvian', 'Re-Corresponding')
 		calendar.name = name_choices[hash((w_i_month, d_i_week, year_1)) % 11]
 		calendar.year_offset = year_1
 		if calendar.name is 'Positivist':
