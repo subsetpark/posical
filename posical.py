@@ -319,8 +319,8 @@ class AlternateCal(object):
 				return self.to_gregorian() >= other_date				
 			def __le__(self, other_date):
 				return self.to_gregorian() <= other_date			
+		
 		AlternateDate.calendar = calendar		
-
 		calendar.date_class = AlternateDate
 
 	def from_date(self, *args):
