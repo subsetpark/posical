@@ -274,7 +274,8 @@ class AlternateCal(object):
 								
 				self.weekday = calendar.get_weekday(self.day)
 				self.month_name = calendar.get_month_name(self.month)
-				self.day_name = calendar.get_day_name(self.day_of_year, self.is_leap)
+				self.day_name = calendar.get_day_name(self.day_of_year, 
+													  self.is_leap)
 				self.weekday_name = calendar.get_weekday_name(self.weekday)
 				
 			def total_days(self):
@@ -282,7 +283,8 @@ class AlternateCal(object):
 				Return the total number of days since year 0.
 				"""
 				year = self.year + calendar.year_offset
-				return datetime.date(year, 1, 1).toordinal() + self.day_of_year - 1
+				d_o_year = self.day_of_year - 1
+				return datetime.date(year, 1, 1).toordinal() + d_o_year
 
 			def to_gregorian(self):
 				return datetime.date.fromordinal(self.total_days())
@@ -291,11 +293,14 @@ class AlternateCal(object):
 				if self.month is calendar.months_in_a_year + 1:
 					return "{}, {}".format(self.day_name, self.year)
 				else:
-					return "{}, {} of {}, {}: {}".format(self.weekday_name, ordinal(self.day), self.month_name, 
-												    self.year, self.day_name)
+					return "{}, {} of {}, {}: {}".format(self.weekday_name,
+					 					ordinal(self.day), self.month_name, 
+												self.year, self.day_name)
 				
 			def __repr__(self):
-				return '%s date(%d, %d, %d)' % (calendar.name.lower(), self.year, self.month, self.day)
+				return '%s date(%d, %d, %d)' % (calendar.name.lower(), 
+												self.year, self.month, 
+												self.day)
 			
 			def __add__(self, arg):
 				return self.calendar.from_date(arg + self.to_gregorian())
@@ -394,16 +399,21 @@ class AlternateCal(object):
 			month = today.month
 		if month == self.months_in_a_year + 1:
 			intercal = True
-			page.append("THE {} EPAGOMENAL DAYS OF THE YEAR {}".format(self.name.upper(), year))
+			page.append("THE {} EPAGOMENAL DAYS OF THE YEAR {}".format(
+													self.name.upper(), year))
 		else:
 			intercal = False
-			page.append("THE {} MONTH OF {}, {}".format(self.name.upper(), self.get_month_name(month).upper(), year))
+			page.append("THE {} MONTH OF {}, {}".format(
+									self.name.upper(), 
+									self.get_month_name(month).upper(), 
+									year))
 	
 		month_offset = (month - 1) * self.weeks_in_a_month * self.days_in_a_week	
 		for week in range(self.weeks_in_a_month):		
 			calbox = []
 			week_offset = (week * self.days_in_a_week)
-			for date in range(1 + week_offset, week_offset + self.days_in_a_week + 1):
+			for date in range(1 + week_offset, 
+							  week_offset + self.days_in_a_week + 1):
 				day_of_year = month_offset + date
 				if day_of_year > len(self.SAINTS):
 					break
@@ -424,7 +434,8 @@ class AlternateCal(object):
 				cap = "|" if day_of_year % self.days_in_a_week == 0 else ""
 				box.append("+".ljust(maxwidth + 1, '-') + cap)
 				if wkd_name:
-					box.append("|" + wkd_name.ljust(maxwidth - len(datestr)) + datestr + cap)
+					box.append("|" + wkd_name.ljust(maxwidth - len(datestr)) 
+								   + datestr + cap)
 				else:
 					box.append("|".ljust(maxwidth + 1) + cap)
 				for i in range(height):
