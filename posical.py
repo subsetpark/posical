@@ -438,9 +438,10 @@ class AlternateCal(object):
 		return "\n".join(page)
 
 	def __str__(self):
-		return "The %s calendar, consisting of %d-day weeks, %d-week months, and %d-month years, with %d epagomenal day(s)." % (self.name, self.days_in_a_week, self.days_in_a_month // self.days_in_a_week, self.months_in_a_year, self.epagomenal_days)
+		return "The {} calendar, consisting of {}-day weeks, {}-week months, and {}-month years, with {} epagomenal day(s).".format(
+				self.name, self.days_in_a_week, self.weeks_in_a_month,
+				self.months_in_a_year, self.epagomenal_days)
 
 if __name__ == "__main__":	
 	import doctest
 	doctest.testmod()
-	
