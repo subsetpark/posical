@@ -48,49 +48,53 @@ def design_calendar():
 
 class AlternateCal(object):
 	"""
-	A class to generate Alternate Date objects.
+	A class to generate Alternate Date objects. An AlternateDate object
+	Represents a date (day, month, year) in an idealized calendar, extending
+	Without disruption in both directions, with the following property: it 
+	Consists of n months, all of the same size, with 365 % n epagomenal days 
+	At the end of the year that are not days of the week and belong to no month.
 
 	>>> cal = AlternateCal()
 	>>> bad_cal = AlternateCal(w_i_month=3, d_i_week=8, year_1=1789)
-	>>> cal.from_date(2014, 2, 22)
-	positivist date(225, 2, 25)
-	>>> cal.from_date(datetime.date(2014, 2, 22))
-	positivist date(225, 2, 25)
-	>>> print(cal.from_date(2001, 1, 1))
-	Monday, 1st of Moses, 212: Prometheus
-	>>> print(cal.from_date(2001, 12, 31))
-	Festival of All the Dead, 212
-	>>> print(cal.from_date(2000, 2, 29))
-	Thursday, 4th of Aristotle, 211: Anaxagoras
-	>>> print(cal.from_date(2000, 12, 31))
-	Festival of Holy Women, 211
-	>>> print(cal.from_date(2014, 2, 22).to_gregorian())
+	>>> cal.from_gregorian(2014, 2, 22)
+	positivist date(226, 2, 25)
+	>>> cal.from_gregorian(datetime.date(2014, 2, 22))
+	positivist date(226, 2, 25)
+	>>> print(cal.from_gregorian(2001, 1, 1))
+	Monday, 1st of Moses, 213: Prometheus
+	>>> print(cal.from_gregorian(2001, 12, 31))
+	Festival of All the Dead, 213
+	>>> print(cal.from_gregorian(2000, 2, 29))
+	Thursday, 4th of Aristotle, 212: Anaxagoras
+	>>> print(cal.from_gregorian(2000, 12, 31))
+	Festival of Holy Women, 212
+	>>> print(cal.from_gregorian(2014, 2, 22).gregorian)
 	2014-02-22
-	>>> cal.from_date(2014, 2, 22)
-	positivist date(225, 2, 25)
+	>>> cal.from_gregorian(2014, 2, 22)
+	positivist date(226, 2, 25)
 	>>> print(cal)
 	The Positivist calendar, consisting of 7-day weeks, 4-week months, and 13-month years, with 1 epagomenal day(s).
 	>>> print(bad_cal)
 	The Antediluvian calendar, consisting of 8-day weeks, 3-week months, and 15-month years, with 5 epagomenal day(s).
-	>>> print(bad_cal.from_date(2014, 3, 5))
-	8th Weekday, 16th of March, 225: Solon
+	>>> print(bad_cal.from_gregorian(2014, 3, 5))
+	8th Weekday, 16th of March, 226: Solon
 	>>> next_day = datetime.timedelta(days = 1)
-	>>> print(bad_cal.from_date(2011,3,11) + next_day)
-	Sunday, 23rd of March, 222: Aristippus
-	>>> cal.date(100, 1, 1) + next_day
-	positivist date(100, 1, 2)
-	>>> cal.date(100, 1, 1) - next_day
-	positivist date(99, 14, 2)
-	>>> cal.date(100, 1, 1) > cal.from_date(2000, 1, 1)
+	>>> print(bad_cal.from_gregorian(2011,3,11) + next_day)
+	Sunday, 23rd of March, 223: Aristippus
+	>>> cal.date(101, 1, 1) + next_day
+	positivist date(101, 1, 2)
+	>>> cal.date(101, 1, 1) - next_day
+	positivist date(100, 14, 2)
+	>>> cal.date(100, 1, 1) > cal.from_gregorian(2000, 1, 1)
 	False
-	>>> cal.date(100, 1, 1) == cal.from_date(2000, 1, 1)
+	>>> cal.date(100, 1, 1) == cal.from_gregorian(2000, 1, 1)
 	False
-	>>> cal.date(100, 1, 1) < cal.from_date(2000, 1, 1)
+	>>> cal.date(100, 1, 1) < cal.from_gregorian(2000, 1, 1)
 	True
-	>>> cal.from_date(2000, 1, 1) - cal.from_date(1500, 1, 1)
+	>>> cal.from_gregorian(2000, 1, 1) - cal.from_gregorian(1500, 1, 1)
 	datetime.timedelta(182621)
 	>>> import datetime
-	>>> datetime.date(2000, 1, 1) > cal.date()
+	>>> datetime.date(2000, 1, 1) > cal.today()
 	False
 	"""
 	
@@ -110,7 +114,8 @@ class AlternateCal(object):
 		calendar.MAXYEAR = datetime.MAXYEAR - year_1 - 1
 		if calendar.name is 'Positivist':
 			calendar.MONTHS = POSIMONTHS
-		else:			calendar.MONTHS = REGMONTHS
+		else:
+			calendar.MONTHS = REGMONTHS
 		calendar.DAYS = ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
 		calendar.SAINTS = ('Prometheus', 'Hercules', 'Orpheus', 'Ulysses', 
 			'Lycurgus', 'Romulus', 'NUMA', 'Belus', 'Sesostris', 'Menu', 
@@ -251,8 +256,6 @@ class AlternateCal(object):
 			'Bernard de Jussieu', "Vicq-d'Azyr", 'Blainville', 'Morgagni', '', 
 			'', 'Festival of Holy Women')
 
-
-
 		class AlternateDate(object):
 			"""
 			A date object that's designed to behave analagously to the standard
@@ -260,7 +263,7 @@ class AlternateCal(object):
 
 			To begin creating date objects, first create an AlternateCal 
 			object. That can then generate objects using the date() or the 
-			from_date() methods.
+			from_gregorian() methods.
 			"""
 
 			def __init__(self, year, month, day, calendar):
@@ -268,10 +271,17 @@ class AlternateCal(object):
 				self.month = month
 				self.day = day
 				self.day_of_year = (month - 1) * calendar.weeks_in_a_month * calendar.days_in_a_week + day
+				self.gregorian = calendar.to_gregorian(self.total_days())
 				if self.day_of_year > 366:
-					raise ValueError("This day cannot exist.")
+					raise ValueError("Date exceeds days in year")
+				if self.year < calendar.MINYEAR:
+					raise ValueError("Year is earlier than minimum of {}".format(calendar.MINYEAR))
+				if self.year == 0:
+					raise ValueError("No such thing as year 0. Look it up")
+				if self.month < 1 or self.day < 1:
+					raise ValueError("Month and Day must be greater than 1")
 
-				self.is_leap = calendar.is_leap(self.to_gregorian().year)
+				self.is_leap = calendar.is_leap(self.gregorian.year)
 								
 				self.weekday = calendar.get_weekday(self.day)
 				self.month_name = calendar.get_month_name(self.month)
@@ -317,7 +327,8 @@ class AlternateCal(object):
 
 			def __str__(self):
 				if self.month is calendar.months_in_a_year + 1:
-					return "{}, {}".format(self.day_name, self.year)				else:
+					return "{}, {}".format(self.day_name, self.year)
+				else:
 					return "{}, {} of {}, {}: {}".format(self.weekday_name,
 					 					ordinal(self.day), self.month_name, 
 												self.year, self.day_name)
@@ -397,7 +408,8 @@ class AlternateCal(object):
 
 	def get_weekday(self, day):
 		return day % self.days_in_a_week or self.days_in_a_week
-		def get_weekday_name(self, weekday):
+	
+	def get_weekday_name(self, weekday):
 		if weekday > len(self.DAYS):
 			return ordinal(weekday) + " Weekday"
 		else:
@@ -485,6 +497,8 @@ class AlternateCal(object):
 		return "The {} calendar, consisting of {}-day weeks, {}-week months, and {}-month years, with {} epagomenal day(s).".format(
 				self.name, self.days_in_a_week, self.weeks_in_a_month,
 				self.months_in_a_year, self.epagomenal_days)
+
+
 
 if __name__ == "__main__":	
 	import doctest
