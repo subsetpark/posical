@@ -105,11 +105,12 @@ class AlternateCal(object):
 						'Urquhart', 'Adamantine', 'Organic Non-Repeating', 
 						'Antediluvian', 'Re-Corresponding')
 		calendar.name = name_choices[hash((w_i_month, d_i_week, year_1)) % 11]
-		calendar.year_offset = year_1
+		calendar.year_offset = year_1 - 1
+		calendar.MINYEAR = -year_1 + 1
+		calendar.MAXYEAR = datetime.MAXYEAR - year_1 - 1
 		if calendar.name is 'Positivist':
 			calendar.MONTHS = POSIMONTHS
-		else:
-			calendar.MONTHS = REGMONTHS
+		else:			calendar.MONTHS = REGMONTHS
 		calendar.DAYS = ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
 		calendar.SAINTS = ('Prometheus', 'Hercules', 'Orpheus', 'Ulysses', 
 			'Lycurgus', 'Romulus', 'NUMA', 'Belus', 'Sesostris', 'Menu', 
@@ -280,19 +281,43 @@ class AlternateCal(object):
 				
 			def total_days(self):
 				"""
-				Return the total number of days since year 0.
+				Return the total number of days since year 1.
 				"""
-				year = self.year + calendar.year_offset
+				offset = calendar.year_offset if self.year > 0 else calendar.year_offset + 1
+				year = self.year + offset
 				d_o_year = self.day_of_year - 1
 				return datetime.date(year, 1, 1).toordinal() + d_o_year
 
-			def to_gregorian(self):
-				return datetime.date.fromordinal(self.total_days())
+			def replace(self, year=None, month=None, day=None):
+				new_year = year or self.year
+				new_month = month or self.month
+				new_day = day or self.day
+				return calendar.date(new_year, new_month, new_day)
+
+			def timetuple(self):
+				return self.gregorian.timetuple()
+
+			def toordinal(self):
+				return self.gregorian.toordinal()
+
+			def weekday(self):
+				"""
+				Following the datetime.date weekday() model, returns 0-indexed weekday int
+				"""
+				return self.weekday - 1
+
+			def isoweekday(self):
+				return self.weekday
 			
+			def isocalendar(self):
+				return self.gregorian.isocalendar()
+
+			def isoformat(self):
+				return "{}-{}-{}".format(self.year, self.month, self.day)
+
 			def __str__(self):
 				if self.month is calendar.months_in_a_year + 1:
-					return "{}, {}".format(self.day_name, self.year)
-				else:
+					return "{}, {}".format(self.day_name, self.year)				else:
 					return "{}, {} of {}, {}: {}".format(self.weekday_name,
 					 					ordinal(self.day), self.month_name, 
 												self.year, self.day_name)
@@ -303,68 +328,76 @@ class AlternateCal(object):
 												self.day)
 			
 			def __add__(self, arg):
-				return self.calendar.from_date(arg + self.to_gregorian())
+				return self.calendar.from_gregorian(arg + self.gregorian)
 			__radd__ = __add__
 			def __sub__(self, arg):
-				return self.calendar.from_date(self.to_gregorian() - arg)
+				return self.calendar.from_gregorian(self.gregorian - arg)
 			def __rsub__(self, arg):
-				return self.calendar.from_date(arg - self.to_gregorian())
+				return self.calendar.from_gregorian(arg - self.gregorian)
 			def __eq__(self, other_date):
-				return other_date == self.to_gregorian()
+				return other_date == self.gregorian
 			def __gt__(self, other_date):
-				return self.to_gregorian() > other_date
+				return self.gregorian > other_date
 			def __lt__(self, other_date):
-				return self.to_gregorian() < other_date
+				return self.gregorian < other_date
 			def __ge__(self, other_date):
-				return self.to_gregorian() >= other_date				
+				return self.gregorian >= other_date				
 			def __le__(self, other_date):
-				return self.to_gregorian() <= other_date			
+				return self.gregorian <= other_date			
 		
 		AlternateDate.calendar = calendar		
 		calendar.date_class = AlternateDate
+		calendar.min = calendar.date(calendar.MINYEAR, 1, 1)
+		calendar.max = calendar.from_gregorian(datetime.date.max)
 
-	def from_date(self, *args):
+	def from_gregorian(self, *args):
 		"""
 		Create an alternate date given one of three formats:
 
-		1. No arguments: create a date from today.
-		2. Three integers in Gregorian Y, M, D format.
-		3. A datetime date object.
+		1. Three integers in Gregorian Y, M, D format.
+		2. A datetime date object.
 		"""
 		if not args:
-			gregorian = datetime.date.today()
-		else:
-			try:
-				year, month, day = args
-				gregorian = datetime.date(year, month, day)
-			except ValueError:
-				gregorian = args[0]
-				if isinstance(gregorian, datetime.timedelta):
-					return gregorian
-		year = gregorian.year - self.year_offset
+			raise ValueError("No Gregorian date provided")
+		try:
+			year, month, day = args
+			gregorian = datetime.date(year, month, day)
+		except ValueError:
+			gregorian = args[0]
+			if isinstance(gregorian, datetime.timedelta):
+				return gregorian
+		unadjusted_year = gregorian.year - self.year_offset
+		year = unadjusted_year if unadjusted_year > 0 else unadjusted_year - 1
 		day_of_year = gregorian.timetuple().tm_yday
 		month = ((day_of_year - 1) // self.days_in_a_month) + 1
 		day = day_of_year % self.days_in_a_month or self.days_in_a_month
 		return self.date_class(year, month, day, self)
 
+	def to_gregorian(self, days):
+		return datetime.date.fromordinal(days)
+
 	def date(self, *args):
 		"""
-		Create an alternate date given a 'native' input:
-
-		1. No argments: create a date from today.
-		2. Three integers in Y, M, D format of the alternate calendar.
+		Create an alternate date given a 'native' input: 
+		Three integers in Y, M, D format of the alternate calendar.
 		"""
-
 		if not args:
-			return self.from_date()
-		else:
-			year, month, day = args
-			return self.date_class(year, month, day, self)
+			raise ValueError("Please provide values in Y, M, D format")
+		year, month, day = args
+		return self.date_class(year, month, day, self)
+		
+	def today(self):
+		return self.from_gregorian(datetime.date.today())
+
+	def fromtimestamp(t):
+		return self.from_gregorian(datetime.date.fromtimestamp(t))
 	
+	def fromordinal(o):
+		return self.from_gregorian(datetime.date.fromordinal(o))
+
 	def get_weekday(self, day):
 		return day % self.days_in_a_week or self.days_in_a_week
-	
-	def get_weekday_name(self, weekday):
+		def get_weekday_name(self, weekday):
 		if weekday > len(self.DAYS):
 			return ordinal(weekday) + " Weekday"
 		else:
