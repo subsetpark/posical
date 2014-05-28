@@ -418,7 +418,7 @@ class AlternateCal(object):
 		page = []
 		maxwidth = max(len(saint) for saint in self.SAINTS + self.LEAPSAINTS)
 		if not year or not month:
-			today = self.date()
+			today = self.today()
 			year = today.year
 			month = today.month
 		if month == self.months_in_a_year + 1:
@@ -450,7 +450,7 @@ class AlternateCal(object):
 					wkd_name = ""
 					datestr = ""
 				saint = self.get_day_name(day_of_year, self.is_leap(year))
-				if day_of_year == self.date().day_of_year:
+				if day_of_year == self.today().day_of_year:
 					saint = "*" + saint + "*"
 				
 				height = 4
