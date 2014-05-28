@@ -17,7 +17,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 """
 
 import datetime,operator
-import calendar
+from calendar import isleap as std_isleap
+from nonzero import nz
 
 POSIMONTHS = ('Moses', 'Homer', 'Aristotle', 'Archimedes', 'Caesar', 
 			  'Saint Paul', 'Charlemagne', 'Dante', 'Gutenberg', 
@@ -110,9 +111,8 @@ class AlternateCal(object):
 						'Antediluvian', 'Re-Corresponding')
 		calendar.name = name_choices[hash((w_i_month, d_i_week, year_1)) % 11]
 		calendar.year_offset = year_1 - 1
-		calendar.MINYEAR = -year_1 + 1
-		calendar.MAXYEAR = datetime.MAXYEAR - year_1 - 1
-		if calendar.name is 'Positivist':
+		calendar.MINYEAR = nz(1) - calendar.year_offset
+		if calendar.name == 'Positivist':
 			calendar.MONTHS = POSIMONTHS
 		else:
 			calendar.MONTHS = REGMONTHS
@@ -262,46 +262,41 @@ class AlternateCal(object):
 			library's datetime date objects.
 
 			To begin creating date objects, first create an AlternateCal 
-			object. That can then generate objects using the date() or the 
+			object. That can then generate objects using the today() or the 
 			from_gregorian() methods.
 			"""
 
-			def __init__(self, year, month, day, calendar):
-				self.year = year
-				self.month = month
-				self.day = day
-				self.day_of_year = (month - 1) * calendar.weeks_in_a_month * calendar.days_in_a_week + day
-				self.gregorian = calendar.to_gregorian(self.total_days())
+			def __init__(self, year, month, day, altcal):
+				self.year = nz(year)
+				self.month = nz(month)
+				self.day = nz(day)
+				self.day_of_year = nz((month - 1) * altcal.weeks_in_a_month * altcal.days_in_a_week + day)
+				self.gregorian = altcal.to_gregorian(self.total_days())
 				if self.day_of_year > 366:
 					raise ValueError("Date exceeds days in year")
-				if self.year < calendar.MINYEAR:
-					raise ValueError("Year is earlier than minimum of {}".format(calendar.MINYEAR))
-				if self.year == 0:
-					raise ValueError("No such thing as year 0. Look it up")
-				if self.month < 1 or self.day < 1:
-					raise ValueError("Month and Day must be greater than 1")
+				if self.year < altcal.MINYEAR:
+					raise ValueError("Year is earlier than minimum of {}".format(altcal.MINYEAR))
 
-				self.is_leap = calendar.is_leap(self.gregorian.year)
+				self.is_leap = std_isleap(self.gregorian.year)
 								
-				self.weekday = calendar.get_weekday(self.day)
-				self.month_name = calendar.get_month_name(self.month)
-				self.day_name = calendar.get_day_name(self.day_of_year, 
+				self.weekday = nz(altcal.get_weekday(self.day))
+				self.month_name = altcal.get_month_name(self.month)
+				self.day_name = altcal.get_day_name(self.day_of_year, 
 													  self.is_leap)
-				self.weekday_name = calendar.get_weekday_name(self.weekday)
+				self.weekday_name = altcal.get_weekday_name(self.weekday)
 				
 			def total_days(self):
 				"""
 				Return the total number of days since year 1.
 				"""
-				offset = calendar.year_offset if self.year > 0 else calendar.year_offset + 1
-				year = self.year + offset
-				d_o_year = self.day_of_year - 1
-				return datetime.date(year, 1, 1).toordinal() + d_o_year
+				year = self.year + calendar.year_offset
+				d_o_year_offset = int(self.day_of_year) - 1
+				return datetime.date(year, 1, 1).toordinal() + d_o_year_offset
 
 			def replace(self, year=None, month=None, day=None):
-				new_year = year or self.year
-				new_month = month or self.month
-				new_day = day or self.day
+				new_year = nz(year) or self.year
+				new_month = nz(month) or self.month
+				new_day = nz(day) or self.day
 				return calendar.date(new_year, new_month, new_day)
 
 			def timetuple(self):
@@ -314,7 +309,7 @@ class AlternateCal(object):
 				"""
 				Following the datetime.date weekday() model, returns 0-indexed weekday int
 				"""
-				return self.weekday - 1
+				return int(self.weekday) - 1
 
 			def isoweekday(self):
 				return self.weekday
@@ -370,15 +365,14 @@ class AlternateCal(object):
 		"""
 		if not args:
 			raise ValueError("No Gregorian date provided")
-		try:
+		if len(args) == 3:
 			year, month, day = args
 			gregorian = datetime.date(year, month, day)
-		except ValueError:
+		elif len(args) == 1 and isinstance(args[0], datetime.date):
 			gregorian = args[0]
-			if isinstance(gregorian, datetime.timedelta):
-				return gregorian
-		unadjusted_year = gregorian.year - self.year_offset
-		year = unadjusted_year if unadjusted_year > 0 else unadjusted_year - 1
+		else:
+			raise ValueError("Please provide a datetime object or 3 ints in Y-M-D format")
+		year = nz(gregorian.year) - self.year_offset
 		day_of_year = gregorian.timetuple().tm_yday
 		month = ((day_of_year - 1) // self.days_in_a_month) + 1
 		day = day_of_year % self.days_in_a_month or self.days_in_a_month
@@ -410,18 +404,21 @@ class AlternateCal(object):
 		return day % self.days_in_a_week or self.days_in_a_week
 	
 	def get_weekday_name(self, weekday):
+		weekday = int(weekday)
 		if weekday > len(self.DAYS):
 			return ordinal(weekday) + " Weekday"
 		else:
 			return self.DAYS[weekday - 1]				
 	
 	def get_month_name(self, month):
+		month = int(month)
 		if month > len(self.MONTHS):
 			return ordinal(month) + " Month"
 		else:
 			return self.MONTHS[(month - 1)]
 	
 	def get_day_name(self, day, is_leap):
+		day = int(day)
 		if day > len(self.SAINTS):
 			return ""
 		elif is_leap and self.LEAPSAINTS[day - 1]:
