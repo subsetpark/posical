@@ -56,47 +56,29 @@ class AlternateCal(object):
 	At the end of the year that are not days of the week and belong to no month.
 
 	>>> cal = AlternateCal()
-	>>> bad_cal = AlternateCal(w_i_month=3, d_i_week=8, year_1=1789)
-	>>> cal.from_gregorian(2014, 2, 22)
-	positivist date(226, 2, 25)
-	>>> cal.from_gregorian(datetime.date(2014, 2, 22))
-	positivist date(226, 2, 25)
-	>>> print(cal.from_gregorian(2001, 1, 1))
-	Monday, 1st of Moses, 213: Prometheus
-	>>> print(cal.from_gregorian(2001, 12, 31))
-	Festival of All the Dead, 213
-	>>> print(cal.from_gregorian(2000, 2, 29))
-	Thursday, 4th of Aristotle, 212: Anaxagoras
-	>>> print(cal.from_gregorian(2000, 12, 31))
-	Festival of Holy Women, 212
-	>>> print(cal.from_gregorian(2014, 2, 22).gregorian)
-	2014-02-22
-	>>> cal.from_gregorian(2014, 2, 22)
-	positivist date(226, 2, 25)
-	>>> print(cal)
-	The Positivist calendar, consisting of 7-day weeks, 4-week months, and 13-month years, with 1 epagomenal day(s).
-	>>> print(bad_cal)
-	The Antediluvian calendar, consisting of 8-day weeks, 3-week months, and 15-month years, with 5 epagomenal day(s).
-	>>> print(bad_cal.from_gregorian(2014, 3, 5))
-	8th Weekday, 16th of March, 226: Solon
-	>>> next_day = datetime.timedelta(days = 1)
-	>>> print(bad_cal.from_gregorian(2011,3,11) + next_day)
-	Sunday, 23rd of March, 223: Aristippus
-	>>> cal.date(101, 1, 1) + next_day
-	positivist date(101, 1, 2)
-	>>> cal.date(101, 1, 1) - next_day
-	positivist date(100, 14, 2)
-	>>> cal.date(100, 1, 1) > cal.from_gregorian(2000, 1, 1)
-	False
-	>>> cal.date(100, 1, 1) == cal.from_gregorian(2000, 1, 1)
-	False
-	>>> cal.date(100, 1, 1) < cal.from_gregorian(2000, 1, 1)
-	True
-	>>> cal.from_gregorian(2000, 1, 1) - cal.from_gregorian(1500, 1, 1)
-	datetime.timedelta(182621)
+	>>> cal.from_gregorian(1789, 1, 1)
+	positivist date(1, 1, 1)
+	>>> cal.from_gregorian(1788, 1, 1)
+	positivist date(-1, 1, 1)
+	>>> cal.from_gregorian(1, 1, 1)
+	positivist date(-1788, 1, 1)
+	>>> cal.from_gregorian(1788, 12, 31)
+	positivist date(-1, 14, 2)
+	>>> cal.from_gregorian(1789, 12, 31)
+	positivist date(1, 14, 1)
+	>>> print(cal.from_gregorian(1788, 6, 1))
+	Saturday, 13rd of Saint Paul, -1: St. Gregory the Great
+	>>> print(cal.from_gregorian(1789, 6, 1))
+	Friday, 12nd of Saint Paul, 1: St. Pulcheria
 	>>> import datetime
-	>>> datetime.date(2000, 1, 1) > cal.today()
-	False
+	>>> cal.date(1, 1, 1) - datetime.timedelta(days=1)
+	positivist date(-1, 14, 2)
+	>>> cal.from_gregorian(1, 12, 31) + datetime.timedelta(days=1)
+	positivist date(-1787, 1, 1)
+	>>> print(cal.date(1800, 1, 1))
+	Monday, 1st of Moses, 1800: Cadmus
+	>>> print(cal.date(1801, 1, 1))
+	Monday, 1st of Moses, 1801: Prometheus
 	"""
 	
 	def __init__(calendar, w_i_month=4, d_i_week=7, year_1=1789):
