@@ -13,6 +13,8 @@ But that's not all! The far-sighted creators of `posical` have seen fit to build
 
 ## usage
 
+`posical` requires the `nonzero` package in order to perform sane year-based math. That package is available on PyPi, so you can install it, for instance, with `pip3 install nonzero`.
+
 `posical` can create python calendar objects that contain information about alternate systems to the standard Gregorian calendar.
 ``` .py
 >>> cal = AlternateCal()
