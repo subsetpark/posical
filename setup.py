@@ -2,7 +2,7 @@ from distutils.core import setup
 setup(
   name = 'posical',
   py_modules = ['posical'],
-  version = '0.1.2',
+  version = '0.1.4',
   description = 'Calendar reform for Python',
   author = 'Z. D. Smith',
   author_email = 'zd@zdsmith.com',

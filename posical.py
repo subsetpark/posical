@@ -402,7 +402,7 @@ class AlternateCal(object):
 			return self.SAINTS[day - 1]
 	
 	def is_leap(self, year):
-		return calendar.isleap(year + self.year_offset)
+		return std_isleap(year + self.year_offset)
 
 	def print_month(self, year=None, month=None):
 		"""
