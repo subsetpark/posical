@@ -34,7 +34,8 @@ def design_calendar():
 	d_i_week = int(input("How many days in a week? ") or 7)
 	w_i_month = int(input("How many weeks in a month? ") or 4)
 	year_1 = int(input("When is year 1? ") or 1789)
-	return AlternateCal(w_i_month, d_i_week, year_1)
+	name = input("What is the calendar's name? ")
+	return AlternateCal(w_i_month, d_i_week, year_1, name)
 
 class AlternateCal(object):
 	"""
@@ -70,7 +71,7 @@ class AlternateCal(object):
 	Monday, 1st of Moses, 1801: Prometheus
 	"""
 	
-	def __init__(calendar, w_i_month=4, d_i_week=7, year_1=1789):
+	def __init__(calendar, w_i_month=4, d_i_week=7, year_1=1789, input_name=""):
 		calendar.days_in_a_month = d_i_week * w_i_month
 		calendar.days_in_a_week = d_i_week
 		calendar.weeks_in_a_month = w_i_month
@@ -80,7 +81,10 @@ class AlternateCal(object):
 						'Multi-Manifold', 'Positivist', 'Crepuscular', 
 						'Urquhart', 'Adamantine', 'Organic Non-Repeating', 
 						'Antediluvian', 'Re-Corresponding')
-		calendar.name = name_choices[hash((w_i_month, d_i_week, year_1)) % 11]
+		if input_name:
+			calendar.name = input_name
+		else:
+			calendar.name = name_choices[hash((w_i_month, d_i_week, year_1)) % 11]
 		calendar.year_offset = year_1 - 1
 		calendar.MINYEAR = nz(1) - calendar.year_offset
 		if calendar.name == 'Positivist':
