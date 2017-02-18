@@ -293,7 +293,7 @@ class AlternateCal(object):
 				return self.gregorian.isocalendar()
 
 			def isoformat(self):
-				return "{}-{}-{}".format(self.year, self.month, self.day)
+				return "{}-{:02}-{:02}".format(self.year, self.month, self.day)
 
 			def __str__(self):
 				if self.month is calendar.months_in_a_year + 1:
